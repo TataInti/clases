@@ -1,0 +1,18 @@
+# Dependencias comunes para Windows, Linux y macOS
+numpy
+pandas
+matplotlib
+scikit-learn
+tiktoken
+transformers
+huggingface-hub
+torch
+
+# Microsoft Windows
+llama-cpp-python ; platform_system == "Windows"
+
+# Linux
+llama-cpp-python ; platform_system == "Linux"
+
+# macOS
+llama-cpp-python ; platform_system == "Darwin"
