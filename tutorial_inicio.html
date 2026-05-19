@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial: Primeros pasos en el Curso de IA</title>
+<style>
+  :root {
+    --azul: #1e6091;
+    --azul-claro: #e7f1f9;
+    --verde: #2e7d32;
+    --verde-claro: #e8f5e9;
+    --amarillo: #fff3cd;
+    --amarillo-borde: #f0ad4e;
+    --rojo: #c62828;
+    --rojo-claro: #fdecea;
+    --gris: #f5f5f5;
+    --texto: #222;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--texto);
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px;
+    background: #fafafa;
+  }
+  h1 {
+    color: var(--azul);
+    font-size: 1.6em;
+    border-bottom: 3px solid var(--azul);
+    padding-bottom: 6px;
+  }
+  h2 {
+    color: var(--azul);
+    font-size: 1.25em;
+    margin-top: 32px;
+    background: var(--azul-claro);
+    padding: 8px 12px;
+    border-left: 4px solid var(--azul);
+    border-radius: 4px;
+  }
+  h3 {
+    color: #333;
+    font-size: 1.05em;
+    margin-top: 20px;
+  }
+  .paso {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .paso p { margin: 4px 0; }
+  .paso ul { margin: 4px 0; padding-left: 20px; }
+  .numero {
+    display: inline-block;
+    background: var(--azul);
+    color: white;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 0.9em;
+  }
+  .tip {
+    background: var(--verde-claro);
+    border-left: 4px solid var(--verde);
+    padding: 8px 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+  .tip::before {
+    content: "💡 Consejo: ";
+    font-weight: bold;
+    color: var(--verde);
+  }
+  .aviso {
+    background: var(--amarillo);
+    border-left: 4px solid var(--amarillo-borde);
+    padding: 8px 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+  .aviso::before {
+    content: "⚠️ Atención: ";
+    font-weight: bold;
+    color: #8a6d3b;
+  }
+  .importante {
+    background: var(--rojo-claro);
+    border-left: 4px solid var(--rojo);
+    padding: 8px 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+  .importante::before {
+    content: "❗ Importante: ";
+    font-weight: bold;
+    color: var(--rojo);
+  }
+  code, pre {
+    font-family: "Consolas", "Monaco", monospace;
+    background: #2b2b2b;
+    color: #f8f8f2;
+    border-radius: 6px;
+  }
+  code { padding: 3px 8px; font-size: 0.95em; }
+  pre {
+    padding: 10px 14px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    border: 1px solid #444;
+  }
+  pre code { background: transparent; padding: 0; }
+  .resaltar {
+    background: #fff59d;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+  }
+  .tecla {
+    display: inline-block;
+    background: #eee;
+    border: 1px solid #aaa;
+    border-bottom-width: 2px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #333;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    background: var(--gris);
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+    font-size: 0.95em;
+  }
+  .windows { background: #cfe2f3; color: #073763; }
+  .mac { background: #ead1dc; color: #4c1130; }
+  .indice {
+    background: white;
+    border: 1px solid var(--azul);
+    border-radius: 8px;
+    padding: 10px 18px;
+    margin-bottom: 20px;
+  }
+  .indice ol { margin: 0; padding-left: 24px; }
+  .indice a { color: var(--azul); text-decoration: none; font-weight: 500; }
+  .indice a:hover { text-decoration: underline; }
+  .checklist {
+    list-style: none;
+    padding-left: 0;
+  }
+  .checklist li {
+    padding: 6px 0 6px 32px;
+    position: relative;
+  }
+  .checklist li::before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+  }
+  hr {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 24px 0;
+  }
+  .bienvenida {
+    background: linear-gradient(135deg, #1e6091, #4a90c2);
+    color: white;
+    padding: 18px 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .bienvenida h1 {
+    color: white;
+    border: none;
+    margin: 0 0 6px 0;
+    font-size: 1.5em;
+  }
+  .bienvenida p { font-size: 1em; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="bienvenida">
+  <h1>👋 ¡Bienvenido al Curso de Inteligencia Artificial!</h1>
+  <p>Esta guía te va a acompañar paso a paso para que tengas todo listo antes de la primera clase. <br>No te apures: vamos despacio y de a poco.</p>
+</div>
+
+<div class="indice">
+  <h3 style="margin-top:0;">📑 Lo que vamos a hacer juntos:</h3>
+  <ol>
+    <li><a href="#parte1">Crear tu cuenta en GitHub</a> (donde están las clases)</li>
+    <li><a href="#parte2">Descargar el material del curso</a> a tu computadora</li>
+    <li><a href="#parte3">Preparar tu computadora</a> para usar las clases</li>
+    <li><a href="#parte4">Comprobar que todo funciona</a></li>
+  </ol>
+</div>
+
+<div class="tip">
+  Antes de empezar, asegurate de tener <strong>conexión a Internet estable</strong> y, si es posible, <strong>la computadora enchufada</strong> a la corriente. Vamos a descargar varios programas.
+</div>
+
+<hr>
+
+<!-- PARTE 1 -->
+<h2 id="parte1">🟦 Parte 1: Crear tu cuenta en GitHub</h2>
+
+<p><strong>GitHub</strong> es como una gran biblioteca en Internet donde guardamos los archivos del curso. Necesitás una cuenta gratis para poder descargarlos cómodamente.</p>
+
+<div class="paso">
+  <p><span class="numero">1</span><strong>Abrí tu navegador</strong> (Chrome, Edge, Safari o Firefox) y andá a la dirección:</p>
+  <p style="text-align:center;"><a href="https://github.com/signup" target="_blank"><span class="resaltar">https://github.com/signup</span></a></p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">2</span>Vas a ver una pantalla que dice <em>"Sign up to GitHub"</em>. Te va a pedir, en este orden:</p>
+  <ul>
+    <li><strong>Email:</strong> escribí tu correo electrónico (el que usás todos los días).</li>
+    <li><strong>Password:</strong> inventá una contraseña con al menos <span class="resaltar">15 letras</span>, o <span class="resaltar">8 con un número y un símbolo</span>. <br>👉 Anotala en un papel para no olvidarla.</li>
+    <li><strong>Username:</strong> elegí un nombre de usuario (puede ser tu nombre + apellido, ej: <code>maria-perez</code>). Si está ocupado, GitHub te avisa.</li>
+    <li><strong>Email preferences:</strong> podés escribir <code>n</code> (por "no") si no querés recibir publicidad.</li>
+  </ul>
+</div>
+
+<div class="paso">
+  <p><span class="numero">3</span>Vas a tener que <strong>resolver un pequeño juego visual</strong> (un captcha) para demostrar que no sos un robot. Seguí las instrucciones en pantalla.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">4</span>GitHub te va a enviar un <strong>código de 6 u 8 dígitos a tu correo</strong>. Abrí tu casilla de email, copiá el código y pegalo en la página.</p>
+  <div class="aviso">Si no te llega en 1 o 2 minutos, revisá la carpeta <strong>"Correo no deseado"</strong> o <strong>"Spam"</strong>.</div>
+</div>
+
+<div class="paso">
+  <p><span class="numero">5</span>¡Listo! Ya tenés tu cuenta. Si te pregunta cosas como <em>"¿cuántas personas trabajarán contigo?"</em>, podés elegir <strong>"Just me"</strong> (solo yo) y <strong>"Student"</strong> (estudiante). En la pantalla siguiente podés hacer clic en <strong>"Skip personalization"</strong> para saltar esos pasos.</p>
+</div>
+
+<div class="tip">
+  Anotá tu <strong>usuario</strong> y <strong>contraseña</strong> en un cuaderno. Los vamos a usar varias veces.
+</div>
+
+<hr>
+
+<!-- PARTE 2 -->
+<h2 id="parte2">🟩 Parte 2: Descargar el material del curso</h2>
+
+<p>Hay <strong>dos caminos</strong> para descargar el material. Elegí el más fácil para tu computadora:</p>
+
+<h3>📥 Opción A: Camino fácil para todos (Windows y Mac)</h3>
+
+<div class="paso">
+  <p><span class="numero">1</span>Andá a la dirección del curso:</p>
+  <p style="text-align:center;"><a href="https://github.com/TataInti/clases" target="_blank"><span class="resaltar">https://github.com/TataInti/clases</span></a></p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">2</span>Buscá un <strong>botón verde</strong> que dice <span style="background:#2ea44f; color:white; padding:4px 12px; border-radius:4px; font-weight:bold;">&lt;&gt; Code</span> (arriba a la derecha de la lista de archivos). Hacé clic ahí.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">3</span>Se abre un menú. Hacé clic en <span class="resaltar">"Download ZIP"</span> (la última opción).</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">4</span>Se va a descargar un archivo llamado <code>clases-main.zip</code> en tu carpeta <strong>Descargas</strong> (o <em>Downloads</em>).</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">5</span><strong>Descomprimí</strong> el archivo:</p>
+  <ul>
+    <li><strong>En Windows:</strong> hacé clic derecho sobre el archivo → <em>"Extraer todo..."</em> → <em>"Extraer"</em>.</li>
+    <li><strong>En Mac:</strong> hacé doble clic sobre el archivo. Se descomprime solo.</li>
+  </ul>
+  <p>Te recomiendo mover la carpeta resultante (<code>clases-main</code>) a un lugar fácil de encontrar, por ejemplo tu <strong>Escritorio</strong> o tu carpeta <strong>Documentos</strong>.</p>
+</div>
+
+<div class="aviso">
+  Esta opción es la más rápida, pero si algún día querés actualizar el material vas a tener que volver a descargar el ZIP. Si te animás a algo más profesional, mirá la Opción B.
+</div>
+
+<h3>📥 Opción B: Usando Git (recomendada para futuro)</h3>
+<p>Esta opción permite actualizar el material con un solo comando. Es un poquito más técnica.</p>
+
+<div class="paso">
+  <p><span class="numero">1</span>Instalá <strong>Git</strong> según tu sistema:</p>
+  <ul>
+    <li><strong>Windows:</strong> descargalo desde <a href="https://git-scm.com/download/win" target="_blank">git-scm.com/download/win</a> y aceptá las opciones por defecto.</li>
+    <li><strong>Mac:</strong> abrí la <strong>Terminal</strong> (buscala en Spotlight con <span class="tecla">⌘</span>+<span class="tecla">Espacio</span>) y escribí <code>git --version</code>. Si no lo tenés, te va a ofrecer instalarlo.</li>
+  </ul>
+</div>
+
+<div class="paso">
+  <p><span class="numero">2</span>Abrí una terminal:</p>
+  <ul>
+    <li><strong>Windows:</strong> botón <strong>Inicio</strong> → escribí <code>PowerShell</code> → Enter.</li>
+    <li><strong>Mac:</strong> abrí la app <strong>Terminal</strong>.</li>
+  </ul>
+</div>
+
+<div class="paso">
+  <p><span class="numero">3</span>Escribí estos comandos, uno por uno (apretá Enter después de cada uno):</p>
+<pre><code>cd Documents
+git clone https://github.com/TataInti/clases.git
+cd clases</code></pre>
+</div>
+
+<hr>
+
+<!-- PARTE 3 -->
+<h2 id="parte3">🟧 Parte 3: Preparar tu computadora</h2>
+
+<p>Ahora vamos a instalar las herramientas que necesita el curso. <strong>Elegí la pestaña según tu computadora:</strong></p>
+
+<div class="tabs">
+  <div class="tab windows">🪟 Si usás Windows</div>
+  <div class="tab mac">🍎 Si usás Mac</div>
+</div>
+
+<!-- WINDOWS -->
+<h3 style="color:#073763;">🪟 Instrucciones para Windows</h3>
+
+<div class="importante">
+  Hay un <strong>asistente automático</strong> que hace TODO por vos: instala Python, Visual Studio Code, descarga las clases y prepara las herramientas. Es la opción más recomendada.
+</div>
+
+<div class="paso">
+  <p><span class="numero">1</span>Hacé clic en el botón <strong>Inicio</strong> (esquina inferior izquierda).</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">2</span>Escribí <span class="resaltar">PowerShell</span>. Cuando aparezca <em>"Windows PowerShell"</em>, hacé <strong>clic derecho</strong> sobre él y elegí <span class="resaltar">"Ejecutar como administrador"</span>.</p>
+  <div class="aviso">Windows te va a preguntar si permitís cambios. Hacé clic en <strong>"Sí"</strong>.</div>
+</div>
+
+<div class="paso">
+  <p><span class="numero">3</span>Se abre una ventana azul. Copiá el siguiente texto completo y pegalo dentro (clic derecho del mouse pega), después apretá <span class="tecla">Enter</span>:</p>
+<pre><code>powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; &amp; ([scriptblock]::Create((Invoke-RestMethod 'https://raw.githubusercontent.com/TataInti/clases/main/scripts/setup_windows.ps1')))"</code></pre>
+</div>
+
+<div class="paso">
+  <p><span class="numero">4</span><strong>Esperá pacientemente.</strong> El asistente puede tardar entre 10 y 30 minutos según tu conexión. Vas a ver muchos textos pasar; es normal.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">5</span>Cuando termine, se abrirá <strong>Visual Studio Code</strong> con las clases listas. ¡Felicitaciones, ya está todo!</p>
+</div>
+
+<div class="tip">
+  Las clases quedan guardadas en: <br><code style="font-size:0.85em;">C:\Usuarios\TU_NOMBRE\GitHub\clases</code>
+</div>
+
+<!-- MAC -->
+<h3 style="color:#4c1130;">🍎 Instrucciones para Mac</h3>
+
+<p>En Mac vamos a hacer los pasos de a uno. Tranquilo, son rápidos.</p>
+
+<div class="paso">
+  <p><span class="numero">1</span><strong>Abrí la Terminal:</strong> apretá <span class="tecla">⌘</span> + <span class="tecla">Espacio</span>, escribí <code>Terminal</code> y dale Enter.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">2</span><strong>Verificá si tenés Python.</strong> Escribí:</p>
+<pre><code>python3 --version</code></pre>
+  <p>Si te muestra algo como <code>Python 3.12.x</code>, ya está. Pasá al paso 4. Si no, seguí al paso 3.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">3</span><strong>Instalá Homebrew y Python.</strong> Pegá estos comandos uno por uno:</p>
+<pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+  <p>Cuando termine (puede tardar varios minutos):</p>
+<pre><code>brew install python@3.12</code></pre>
+</div>
+
+<div class="paso">
+  <p><span class="numero">4</span><strong>Entrá a la carpeta del curso</strong> (la que descargaste en la Parte 2):</p>
+<pre><code>cd ~/Documents/clases-main</code></pre>
+  <div class="aviso">Si descargaste con Git, la carpeta se llama <code>clases</code> en lugar de <code>clases-main</code>. Ajustá el comando.</div>
+</div>
+
+<div class="paso">
+  <p><span class="numero">5</span><strong>Creá un entorno aislado</strong> (es como una "caja" donde se instalan las herramientas sin afectar el resto de tu Mac):</p>
+<pre><code>python3 -m venv .venv
+source .venv/bin/activate</code></pre>
+  <p>Vas a notar que aparece <code>(.venv)</code> al inicio de cada línea. Eso quiere decir que el entorno está activado. ✅</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">6</span><strong>Instalá las herramientas de Inteligencia Artificial</strong>:</p>
+<pre><code>pip install -r requirements.txt</code></pre>
+  <p>Esta parte puede tardar entre 10 y 20 minutos. <strong>No cierres la ventana</strong> hasta que vuelva a aparecer la línea con <code>(.venv)</code> al principio.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">7</span><strong>Instalá Visual Studio Code</strong> (para ver las clases más cómodo) desde:</p>
+  <p style="text-align:center;"><a href="https://code.visualstudio.com/Download" target="_blank"><span class="resaltar">https://code.visualstudio.com/Download</span></a></p>
+  <p>Descargá la versión <strong>Mac Universal</strong>, abrí el archivo <code>.zip</code> y arrastrá Visual Studio Code a la carpeta <strong>Aplicaciones</strong>.</p>
+</div>
+
+<hr>
+
+<!-- PARTE 4 -->
+<h2 id="parte4">🟪 Parte 4: Comprobar que todo funciona</h2>
+
+<div class="paso">
+  <p><span class="numero">1</span>Abrí <strong>Visual Studio Code</strong>.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">2</span>En el menú de arriba, andá a <strong>File → Open Folder</strong> (o <em>Archivo → Abrir carpeta</em>) y elegí la carpeta <strong>clases</strong> (o <strong>clases-main</strong>) que descargaste.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">3</span>Vas a ver una lista de carpetas (<code>modulo_1</code>, <code>modulo_2</code>, etc.). Entrá en <code>modulo_1</code> y abrí el archivo <code>clase_1_que_es_la_IA.ipynb</code> con un doble clic.</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">4</span>La primera vez te puede aparecer un mensaje preguntando si confiás en los autores. Hacé clic en <span class="resaltar">"Yes, I trust the authors"</span> (Sí, confío).</p>
+</div>
+
+<div class="paso">
+  <p><span class="numero">5</span>Si arriba a la derecha te pide <strong>"Select Kernel"</strong>, elegí <code>.venv (Python 3.12)</code>.</p>
+</div>
+
+<div class="tip">
+  Si ves el contenido de la clase con texto, imágenes y bloques de código, <strong>¡todo está perfecto!</strong> Ya estás listo para la primera clase. 🎉
+</div>
+
+<hr>
+
+<h2>📋 Lista final para chequear antes de la clase</h2>
+
+<ul class="checklist">
+  <li>Tengo cuenta en GitHub y anoté usuario y contraseña.</li>
+  <li>Descargué la carpeta <code>clases</code> y sé dónde está guardada.</li>
+  <li>Instalé Python (versión 3.12 o más nueva).</li>
+  <li>Instalé Visual Studio Code y lo puedo abrir.</li>
+  <li>Pude abrir un archivo <code>.ipynb</code> sin errores.</li>
+  <li>Tengo una conexión a Internet estable.</li>
+  <li>Tengo un cuaderno y lapicera a mano para anotar.</li>
+</ul>
+
+<div class="importante">
+  <strong>¿Algo no funciona?</strong> No te preocupes ni te frustres. Anotá <strong>en qué paso te quedaste</strong> y, si podés, sacá una <strong>foto de la pantalla</strong> con el celular. En la primera clase te ayudamos a resolverlo entre todos.
+</div>
+
+<div style="text-align:center; margin-top: 40px; padding: 20px; background: var(--azul-claro); border-radius: 10px;">
+  <h3 style="margin:0; color: var(--azul);">🚀 ¡Nos vemos en la primera clase!</h3>
+  <p style="margin:8px 0 0 0;">Recordá: aprender lleva su tiempo. <strong>No hay preguntas tontas.</strong></p>
+</div>
+
+</body>
+</html>
