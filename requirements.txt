@@ -11,6 +11,7 @@ python-pptx
 google-genai
 python-dotenv
 
+
 # Microsoft Windows
 llama-cpp-python ; platform_system == "Windows"
 
