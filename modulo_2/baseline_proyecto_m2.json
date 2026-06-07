@@ -1,0 +1,18 @@
+{
+  "nombre_proyecto": "[TU PROYECTO AQUÍ]",
+  "tipo_problema": "clasificacion | regresion",
+  "dataset": "[nombre o descripción del dataset]",
+  "n_ejemplos": 0,
+  "n_features": 0,
+  "variable_target": "[nombre de la variable a predecir]",
+  "modelo_baseline": "[modelo elegido, ej: LogisticRegression]",
+  "metrica_principal": "[accuracy / F1 / RMSE / R²]",
+  "score_baseline_test": 0.0,
+  "score_baseline_train": 0.0,
+  "tarea_prompting": "[qué tarea asiste el LLM, ej: explicar predicciones]",
+  "modelo_llm": "gemini-2.5-flash-lite",
+  "prompt_baseline_id": "[ID del prompt en el repositorio de la clase 5]",
+  "prompt_baseline_score": "[resultado cualitativo: malo / aceptable / bueno]",
+  "alumno": "[tu nombre]",
+  "fecha": "2026-06-07"
+}
