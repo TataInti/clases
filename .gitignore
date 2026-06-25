@@ -2,3 +2,6 @@
 .vscode/
 lineamientos/
 _rag/
+.github/
+.claude/
+.gitignore
