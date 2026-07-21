@@ -26,11 +26,24 @@ Este repositorio contiene el material de clases para el curso de **IA Aplicada**
 - **Clase 9**: Regresión y establecimiento de Baselines
 - **Bonus**: [Notebook 11](modulo_2/11.ipynb)
 
-### Módulo 3: Modelos de Chat Locales
-- Implementación de un modelo de chat local (`modulo_3/local_chat_model.ipynb`)
+### Módulo 3: Programación para IA (Python, NumPy, Pandas y Scikit-Learn)
+- **Clase 1-2**: Python para principiantes
+- **Clase 3**: Algoritmos y pensamiento computacional
+- **Clase 4**: Lógica booleana
+- **Clase 5**: Condicionales en Python
+- **Clase 6**: Bucles y repetición
+- **Clase 7**: Listas, diccionarios y datasets para IA
+- **Clase 8**: Funciones y reutilización para IA
+- **Clase 9**: NumPy básico
+- **Clase 10**: NumPy aplicado y Pandas intro
+- **Clase 11**: Pandas: manipulación de datos para IA
+- **Clase 12**: Pandas y tu primer clasificador divertido
+- **Clase 13**: Comparar modelos con gráficas
+- **Clase 14**: Proyecto divertido de clasificación (frontera de decisión)
 
-### Módulo 4: Tokenización
-- Entrenamiento de un modelo BPE (Byte Pair Encoding) (`modulo_4/train_BPE_model.ipynb`)
+### Módulo 4: LLMs locales y Tokenización
+- **Clase 1**: Mi primer LLM CHAT con `llama.cpp` (`modulo_4/Clase 1 - Mi primer LLM CHAT.ipynb`)
+- **Clase 2**: Entrenar un modelo BPE (Byte Pair Encoding) (`modulo_4/Clase 2 - Entrenar un modelo BPE.ipynb`)
 
 ### Módulo 5: Retrieval-Augmented Generation (RAG)
 - Demo funcional de RAG (`modulo_5/rag_demo.ipynb`)
