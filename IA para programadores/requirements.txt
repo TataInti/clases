@@ -1,0 +1,31 @@
+# Base científica y notebooks
+numpy
+pandas
+matplotlib
+seaborn
+scipy
+scikit-learn>=1.4
+certifi
+Pillow
+nbformat
+nbclient
+ipykernel
+jupyterlab
+
+# Deep Learning y visión
+torch
+torchvision
+tensorflow>=2.16
+ultralytics
+
+# Texto, audio, embeddings y LLM local
+transformers
+sentence-transformers
+huggingface-hub
+soundfile
+llama-cpp-python
+tiktoken
+
+# Datos geoespaciales
+rasterio
+geopandas
