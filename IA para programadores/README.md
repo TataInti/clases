@@ -39,8 +39,6 @@ vez, pero con datos controlados y modelos pequeños o preentrenados.
   alumnos puedan reconocer cada componente, leer un pipeline y formular buenas
   preguntas antes de especializarse.
 
-El temario de referencia está en `curso/CURSO.docx` y no es modificado por el
-generador.
 
 ## Preparación
 
@@ -48,8 +46,8 @@ Se requiere Python 3.12. Desde esta carpeta:
 
 ```bash
 python3.12 -m venv .venv
-source .venv/bin/activate        # macOS / Linux
-# .venv\Scripts\activate         # Windows
+# source .venv/bin/activate        # macOS / Linux
+.venv\Scripts\activate         # Windows
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 jupyter lab
@@ -72,10 +70,7 @@ descargar:
   (aproximadamente 500 MB).
 
 Los modelos quedan en las caches habituales de PyTorch, Hugging Face y
-Ultralytics. Para preparar un aula, ejecutar una vez todos los notebooks con
-internet y después repetir con la red deshabilitada. Los notebooks distinguen
-una inferencia real de un fallback; un fallback permite continuar una explicación
-pero no satisface la validación del modelo.
+Ultralytics.
 
 ## Assets locales
 
@@ -87,37 +82,3 @@ pero no satisface la validación del modelo.
   con el mismo CRS.
 - `assets/images/`: imágenes pequeñas para ResNet/YOLO, con procedencia,
   atribución y términos documentados en `assets/images/README.md`.
-
-Los archivos geoespaciales pueden regenerarse con:
-
-```bash
-python assets/geospatial/create_assets.py
-python assets/images/create_assets.py
-```
-
-## Regenerar los notebooks
-
-El contenido mantenible vive en `course_parts/` y los helpers compartidos en
-`course_builder.py`. Para reemplazar los notebooks generados:
-
-```bash
-python build_notebooks.py
-```
-
-El generador valida la estructura pedagógica, retira los nombres de la versión
-anterior y escribe notebooks limpios, sin outputs. Git conserva el historial.
-
-## Criterios de validación
-
-Antes de distribuir el material:
-
-1. generar los ocho notebooks;
-2. ejecutar cada uno desde un kernel limpio;
-3. comprobar una primera pasada con descargas y una segunda desde cache;
-4. confirmar que las actividades marcadas con `TODO` parten de valores válidos;
-5. revisar los resultados específicos: baseline y test en ML, shapes de
-   PyTorch/Keras, cajas/máscaras/IoU, transcripción real no vacía, retrieval,
-   JSON parseable y CRS/NDVI consistentes.
-
-Los artefactos producidos por las prácticas se escriben bajo `artifacts/`, que
-está excluido de Git.
