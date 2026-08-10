@@ -1,4 +1,24 @@
-.venv
+.venv/
 .github/
 .gitignore
 .DS_Store
+
+# Notebooks de práctica (no se suben)
+pruebas.ipynb
+
+# Secretos y variables de entorno
+.env
+.env.*
+!.env.example
+*.env.local
+
+# Caché y archivos temporales de Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.log
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
