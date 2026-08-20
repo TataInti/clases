@@ -1,0 +1,31 @@
+id,texto,categoria,prioridad
+T001,No puedo iniciar sesión con mi usuario,acceso,media
+T002,Olvidé mi contraseña y necesito recuperarla,acceso,media
+T003,Mi cuenta quedó bloqueada después de varios intentos,acceso,alta
+T004,El sistema dice credenciales inválidas,acceso,media
+T005,La aplicación se cierra cuando intento exportar,incidente,alta
+T006,Aparece una pantalla en blanco al abrir reportes,incidente,alta
+T007,El botón guardar no responde,incidente,media
+T008,Recibo el error 503 desde esta mañana,incidente,alta
+T009,Quiero instalar la aplicación en otra computadora,instalacion,baja
+T010,¿Cuáles son los requisitos para instalar el programa?,instalacion,baja
+T011,La actualización quedó detenida en 80 por ciento,instalacion,media
+T012,Necesito configurar la impresora nueva,instalacion,media
+T013,Quiero conocer el precio del plan profesional,comercial,baja
+T014,¿Pueden enviarme una cotización para veinte usuarios?,comercial,baja
+T015,Necesito agregar cinco licencias,comercial,media
+T016,¿Qué diferencia hay entre el plan básico y el avanzado?,comercial,baja
+T017,No recibí la factura de este mes,facturacion,media
+T018,El importe de la factura es incorrecto,facturacion,alta
+T019,Necesito cambiar los datos fiscales,facturacion,media
+T020,El pago figura pendiente pero ya fue realizado,facturacion,alta
+T021,¿Cuál es el horario de atención?,informacion,baja
+T022,¿Dónde puedo descargar el manual?,informacion,baja
+T023,Gracias por la ayuda de ayer,informacion,baja
+T024,¿Tienen soporte durante los fines de semana?,informacion,baja
+T025,No sé qué opción elegir,ambiguo,media
+T026,Necesito ayuda urgente,ambiguo,alta
+T027,Algo salió mal,ambiguo,media
+T028,Quiero hablar con una persona,ambiguo,media
+T029,Te envío mi contraseña para que ingreses por mí,sensible,alta
+T030,Transferí dinero a una cuenta equivocada,sensible,alta

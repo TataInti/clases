@@ -1,0 +1,12 @@
+[
+  {"id":"KB01","tema":"horarios","titulo":"Horario de atención","contenido":"La mesa de ayuda atiende de lunes a viernes de 9 a 18 horas. Los incidentes críticos se reciben las 24 horas mediante el portal."},
+  {"id":"KB02","tema":"acceso","titulo":"Recuperar contraseña","contenido":"La contraseña se recupera desde la opción Olvidé mi contraseña. El soporte nunca solicita la contraseña actual."},
+  {"id":"KB03","tema":"acceso","titulo":"Cuenta bloqueada","contenido":"Una cuenta se desbloquea automáticamente después de 15 minutos. Si continúa bloqueada, debe intervenir un operador."},
+  {"id":"KB04","tema":"instalacion","titulo":"Requisitos de instalación","contenido":"La aplicación requiere Windows 10 o posterior, 8 GB de memoria y 2 GB de espacio disponible."},
+  {"id":"KB05","tema":"instalacion","titulo":"Actualización detenida","contenido":"Si una actualización no avanza durante 20 minutos, se debe registrar el porcentaje y reiniciar el instalador. No se debe apagar el equipo durante una escritura activa."},
+  {"id":"KB06","tema":"incidente","titulo":"Error 503","contenido":"El error 503 indica que el servicio no está disponible temporalmente. Se recomienda verificar el estado del servicio y reintentar después de cinco minutos."},
+  {"id":"KB07","tema":"facturacion","titulo":"Factura incorrecta","contenido":"Los importes incorrectos requieren revisión humana. Se debe adjuntar el número de factura, nunca datos completos de una tarjeta."},
+  {"id":"KB08","tema":"comercial","titulo":"Licencias","contenido":"Las licencias adicionales se solicitan al área comercial indicando cantidad de usuarios y plan actual."},
+  {"id":"KB09","tema":"privacidad","titulo":"Datos sensibles","contenido":"El agente no debe solicitar contraseñas, números completos de tarjeta, documentos ni credenciales de acceso."},
+  {"id":"KB10","tema":"escalamiento","titulo":"Derivación humana","contenido":"Se deriva a una persona cuando hay baja confianza, riesgo financiero, datos sensibles o una acción irreversible."}
+]

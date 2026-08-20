@@ -41,9 +41,18 @@ Este repositorio contiene el material de clases para el curso de **IA Aplicada**
 - **Clase 13**: Comparar modelos con gráficas
 - **Clase 14**: Proyecto divertido de clasificación (frontera de decisión)
 
-### Módulo 4: LLMs locales y Tokenización
-- **Clase 1**: Mi primer LLM CHAT con `llama.cpp` (`modulo_4/Clase 1 - Mi primer LLM CHAT.ipynb`)
-- **Clase 2**: Entrenar un modelo BPE (Byte Pair Encoding) (`modulo_4/Clase 2 - Entrenar un modelo BPE.ipynb`)
+### Módulo 4: Algoritmos avanzados y agentes inteligentes
+- **Clase 1**: Introducción a los agentes
+- **Clase 2**: De chatbot a agente con un LLM local
+- **Clase 3**: Reglas vs. LLM para clasificar tickets
+- **Clase 4**: Herramientas y decisiones controladas
+- **Clase 5**: Memoria, contexto y estado
+- **Clase 6**: Conocimiento y recuperación de información
+- **Clase 7**: Visión por computadora como herramienta
+- **Clase 8**: Decisiones autónomas y aprendizaje por refuerzo
+- **Clase 9**: Evaluación comparativa, riesgo e ISO 42001
+- **Clase 10**: Taller comparativo y defensa de arquitectura
+- **Material opcional avanzado**: Entrenamiento de un mini-GPT desde cero
 
 ### Módulo 5: Retrieval-Augmented Generation (RAG)
 - Demo funcional de RAG (`modulo_5/rag_demo.ipynb`)

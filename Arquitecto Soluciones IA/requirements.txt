@@ -8,6 +8,8 @@ tiktoken
 transformers
 huggingface-hub
 torch
+torchvision
+Pillow
 python-pptx
 google-genai
 python-dotenv
