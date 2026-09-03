@@ -1,0 +1,29 @@
+CIRCO AURORA - BASE DE CONOCIMIENTO
+Este documento es la única fuente de verdad del asistente virtual.
+Si un dato no está escrito acá, el asistente no debe inventarlo.
+Cada sección empieza con ### y se transforma en un fragmento recuperable.
+
+### Espectáculos
+La temporada presenta cuatro shows: Acróbatas del Viento (acrobacia aérea),
+Luna de Magia (magia e ilusionismo), Risas Voladoras (payasos y clown) y
+El Gran Trapecio (trapecio y vuelo). Los cuatro números forman parte de la
+misma función general, con una duración total de dos horas.
+
+### Horarios
+Hay funciones de jueves a domingo. La función empieza a las 20:30 los
+jueves y viernes, y a las 17:00 los sábados y domingos. La puerta abre
+una hora antes de cada función. No hay funciones los lunes, martes y
+miércoles.
+
+### Precios
+Los valores dependen del sector elegido. Menores de 2 años entran gratis
+sin ocupar butaca. Consultá los descuentos disponibles en la boletería.
+
+### Reglas para el público
+No se permite entrar con comida ni bebida comprada afuera. Está prohibido
+usar flash. Los niños deben estar acompañados por un adulto en todo momento. 
+No se puede pasar al área de artistas ni tocar el equipo del circo.
+
+### Ubicación
+La carpa está instalada en el Predio Ferial, entrada por Avenida Siempre
+Verde 450. Llega el colectivo 42 y el tren de la costa, estación Ferial.
