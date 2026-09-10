@@ -49,7 +49,7 @@ Este repositorio contiene el material de clases para el curso de **IA Aplicada**
 - **Clase 5**: Memoria, contexto y estado
 - **Clase 6**: Conocimiento y recuperación de información
 - **Clase 7**: Visión por computadora como herramienta
-- **Clase 8**: Decisiones autónomas y aprendizaje por refuerzo
+- **Clase 8**: Primeros pasos con n8n, JSON y contratos de datos
 - **Clase 9**: Evaluación comparativa, riesgo e ISO 42001
 - **Clase 10**: Taller comparativo y defensa de arquitectura
 - **Material opcional avanzado**: Entrenamiento de un mini-GPT desde cero

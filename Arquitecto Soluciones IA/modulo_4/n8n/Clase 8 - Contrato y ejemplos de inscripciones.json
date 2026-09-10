@@ -1,0 +1,113 @@
+{
+  "tipo_documento": "material_didactico",
+  "uso": "Referencia para leer y copiar datos durante la construcción manual",
+  "advertencia": "Este archivo es documental y no contiene nodos ni conexiones de n8n",
+  "contrato_entrada": [
+    {
+      "nombre": "inscripcion_id",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "INS-001"
+    },
+    {
+      "nombre": "nombre",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "Lucía Gómez"
+    },
+    {
+      "nombre": "email",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "lucia@example.com"
+    },
+    {
+      "nombre": "taller",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "Introducción a n8n"
+    },
+    {
+      "nombre": "modalidad",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "presencial"
+    },
+    {
+      "nombre": "cantidad_asistentes",
+      "tipo": "number",
+      "obligatorio": true,
+      "ejemplo": 1
+    },
+    {
+      "nombre": "confirmada",
+      "tipo": "boolean",
+      "obligatorio": true,
+      "ejemplo": true
+    }
+  ],
+  "contrato_salida": [
+    {
+      "nombre": "inscripcion_id",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "INS-001"
+    },
+    {
+      "nombre": "estado",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "registrada"
+    },
+    {
+      "nombre": "taller",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "Introducción a n8n"
+    },
+    {
+      "nombre": "modalidad",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "presencial"
+    },
+    {
+      "nombre": "cantidad_asistentes",
+      "tipo": "number",
+      "obligatorio": true,
+      "ejemplo": 1
+    },
+    {
+      "nombre": "confirmada",
+      "tipo": "boolean",
+      "obligatorio": true,
+      "ejemplo": true
+    },
+    {
+      "nombre": "mensaje",
+      "tipo": "string",
+      "obligatorio": true,
+      "ejemplo": "Hola Lucía Gómez, tu inscripción fue registrada."
+    }
+  ],
+  "inscripciones_de_ejemplo": [
+    {
+      "inscripcion_id": "INS-001",
+      "nombre": "Lucía Gómez",
+      "email": "lucia@example.com",
+      "taller": "Introducción a n8n",
+      "modalidad": "presencial",
+      "cantidad_asistentes": 1,
+      "confirmada": true
+    },
+    {
+      "inscripcion_id": "INS-002",
+      "nombre": "Martín Rojas",
+      "email": "martin@example.com",
+      "taller": "Automatizaciones para equipos",
+      "modalidad": "virtual",
+      "cantidad_asistentes": 2,
+      "confirmada": false
+    }
+  ]
+}
