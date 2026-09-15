@@ -1,16 +1,16 @@
 # Clase 9 — Construcción manual de un agente de IA en n8n
-## Inscripciones a cursos con Google Sheets
+## Inscripciones a cursos con Data Table
 
 **Duración estimada:** 90 minutos  
 **Modalidad:** construcción guiada desde un canvas vacío  
 **Continuidad:** Clase 8 — Primeros pasos con n8n  
-**Archivo JSON de respaldo:** `n8n/Clase 9 - Inscripcion con agente y Google Sheets.json`
+**Archivo JSON de respaldo:** `n8n/Clase 9 - Inscripcion con agente y Data Table.json`
 
 ## Importante antes de comenzar
 
 Durante la clase **no se importa el JSON**.
 
-El JSON queda preparado como material de respaldo, pero el objetivo didáctico es construir el workflow manualmente, agregando cada nodo, cada conexión y cada campo, igual que en la Clase 8.
+El JSON queda preparado como material de respaldo, pero el objetivo didáctico es construir el workflow manualmente, agregando cada tabla, cada nodo, cada conexión y cada campo, igual que en la Clase 8.
 
 El archivo JSON puede utilizarse después para:
 
@@ -19,18 +19,20 @@ El archivo JSON puede utilizarse después para:
 - repetir la clase en otra instalación;
 - disponer de una versión lista para importar.
 
-> No se utilizan nodos `Code` ni JavaScript. Todas las transformaciones se realizan mediante `Edit Fields`, expresiones y nodos de n8n.
+En esta clase no usamos Google Sheets. La conexión con Google Sheets exigiría configurar un proyecto en Google Cloud y credenciales OAuth. Para mantener el foco en el agente de IA, usamos **Data Table**, una tabla interna de n8n que no requiere cuentas ni APIs externas.
+
+> No se utilizan nodos `Code` ni JavaScript. Todas las transformaciones se realizan mediante `Edit Fields`, expresiones y nodos visuales.
 
 ## Resultado que vamos a construir
 
-Una persona solicita inscribirse a un curso. En Google Sheets existen tres comisiones: una completa y dos con cupos disponibles.
+Una persona solicita inscribirse a un curso. En una tabla interna de n8n existen tres comisiones: una completa y dos con cupos disponibles.
 
 El workflow deberá:
 
 1. recibir los datos del alumno desde un `Manual Trigger`;
-2. consultar Google Sheets para conocer las comisiones;
+2. consultar la tabla de comisiones;
 3. utilizar un agente de IA para elegir una comisión disponible;
-4. guardar la inscripción en otra hoja;
+4. guardar la inscripción en otra tabla;
 5. descontar un cupo de la comisión elegida;
 6. registrar al alumno en lista de espera si no hay vacantes;
 7. utilizar otro agente para redactar un correo personalizado;
@@ -42,7 +44,7 @@ El flujo general será:
 Inicio manual
 → Datos del alumno
 → Agente asignador
-   ├─ consulta Google Sheets como herramienta
+   ├─ consulta Data Table como herramienta
    ├─ utiliza un modelo de lenguaje
    └─ devuelve una salida estructurada
 → ¿Hay cupo disponible?
@@ -52,29 +54,35 @@ Inicio manual
 → Preparar flujo de envío
 ```
 
-## 1. Preparar la planilla
+## 1. Crear las tablas internas de n8n
 
-Crear una planilla de Google Sheets con dos hojas llamadas exactamente:
+Las tablas se crean desde la interfaz de n8n, antes de construir el workflow.
 
-```text
-Comisiones
-Inscripciones
-```
-
-### 1.1. Crear la hoja `Comisiones`
-
-En la primera fila escribir, en columnas separadas:
+1. Ir al **Project Overview**.
+2. Abrir la sección **Data Tables**.
+3. Seleccionar **Create Data Table**.
+4. Crear la primera tabla con este nombre:
 
 ```text
-id_comision
-curso
-horario
-cupo_total
-cupos_disponibles
-estado_comision
+Clase 9 - Comisiones
 ```
 
-Cargar las siguientes filas:
+### 1.1. Columnas de `Clase 9 - Comisiones`
+
+Agregar las columnas una por una:
+
+| Columna | Tipo |
+|---|---|
+| `id_comision` | String |
+| `curso` | String |
+| `horario` | String |
+| `cupo_total` | Number |
+| `cupos_disponibles` | Number |
+| `estado_comision` | String |
+
+### 1.2. Filas de `Clase 9 - Comisiones`
+
+Cargar tres filas:
 
 | id_comision | curso | horario | cupo_total | cupos_disponibles | estado_comision |
 |---|---|---|---:|---:|---|
@@ -84,36 +92,42 @@ Cargar las siguientes filas:
 
 La primera comisión está completa. Las otras dos tienen cupos.
 
-### 1.2. Crear la hoja `Inscripciones`
-
-En la primera fila escribir:
+5. Crear otra tabla:
 
 ```text
-id_inscripcion
-nombre_alumno
-correo_electronico
-curso_solicitado
-id_comision
-horario_comision
-estado_inscripcion
-motivo_asignacion
+Clase 9 - Inscripciones
 ```
+
+### 1.3. Columnas de `Clase 9 - Inscripciones`
+
+Agregar las columnas una por una:
+
+| Columna | Tipo |
+|---|---|
+| `id_inscripcion` | String |
+| `nombre_alumno` | String |
+| `correo_electronico` | String |
+| `curso_solicitado` | String |
+| `preferencia_horaria` | String |
+| `id_comision` | String |
+| `horario_comision` | String |
+| `estado_inscripcion` | String |
+| `motivo_asignacion` | String |
 
 No cargar filas de alumnos. Las agregará el workflow.
 
 ## 2. Crear el workflow vacío
 
-1. Abrir n8n.
-2. Crear un workflow nuevo.
-3. No utilizar el archivo JSON.
-4. Nombrar el workflow:
+1. Crear un workflow nuevo.
+2. No utilizar el archivo JSON.
+3. Nombrar el workflow:
 
 ```text
-Clase 9 - Inscripción con agente y Google Sheets
+Clase 9 - Inscripción con agente y Data Table
 ```
 
-5. Trabajar sobre el canvas vacío.
-6. Guardar antes de comenzar a agregar nodos.
+4. Trabajar sobre el canvas vacío.
+5. Guardar antes de agregar nodos.
 
 ## 3. Crear el disparador manual
 
@@ -126,7 +140,7 @@ Inicio manual
 
 3. Dejarlo sin configuración adicional.
 
-Este nodo permite ejecutar el workflow desde el botón **Execute Workflow**, como en la Clase 8.
+Este nodo permite ejecutar el workflow desde **Execute Workflow**, como en la Clase 8.
 
 ## 4. Crear los datos del alumno
 
@@ -138,7 +152,7 @@ Este nodo permite ejecutar el workflow desde el botón **Execute Workflow**, com
 Datos del alumno
 ```
 
-4. Crear los siguientes campos, uno por uno.
+4. Crear los siguientes campos, uno por uno:
 
 | Campo | Tipo | Valor de prueba |
 |---|---|---|
@@ -155,8 +169,9 @@ Datos del alumno
 Preguntar antes de continuar:
 
 - ¿Cuántos campos tiene el item?
-- ¿Cuál es el nombre exacto del campo que contiene el curso?
-- ¿Qué diferencia hay entre `INS-001` y un número?
+- ¿Qué campo identifica el curso?
+- ¿Qué información todavía no conocemos?
+- ¿Por qué la comisión no debe estar escrita en este nodo?
 
 ## 5. Crear el agente asignador
 
@@ -174,7 +189,7 @@ En el nodo `Agente asignador`:
 
 1. Seleccionar **Define below** como origen del mensaje del usuario.
 2. Activar **Require Specific Output Format**.
-3. En el campo del mensaje escribir, utilizando expresiones:
+3. Escribir:
 
 ```text
 Datos del alumno:
@@ -190,10 +205,10 @@ Después devolvé únicamente la salida estructurada solicitada.
 
 Para insertar una expresión:
 
-1. activar el modo **Expression** del campo;
+1. activar el modo **Expression**;
 2. escribir o seleccionar `$json`;
 3. elegir el campo correspondiente;
-4. volver a comprobar la vista previa del valor.
+4. comprobar la vista previa.
 
 ### 5.2. Configurar el mensaje de sistema
 
@@ -226,7 +241,7 @@ Todavía no ejecutar el agente: faltan el modelo, la herramienta y el parser.
 
 1. Agregar un nodo **OpenRouter Chat Model**.
 2. Ubicarlo debajo del agente.
-3. Renombrarlo, si se desea, como:
+3. Renombrarlo:
 
 ```text
 Modelo para los agentes
@@ -235,33 +250,37 @@ Modelo para los agentes
 4. Seleccionar la credencial de OpenRouter disponible.
 5. Seleccionar un modelo de conversación habilitado.
 6. Configurar una temperatura baja, aproximadamente `0.2`.
-7. Conectar la salida `Language Model` del nodo al puerto `Chat Model` de `Agente asignador`.
+7. Conectar la salida `Language Model` al puerto `Chat Model` de `Agente asignador`.
 
-La temperatura baja ayuda a que el agente sea más consistente al elegir una comisión y calcular el cupo restante.
+La temperatura baja ayuda a que la decisión sea más consistente.
 
-## 7. Crear la herramienta para consultar comisiones
+## 7. Crear la herramienta de consulta
 
-El agente necesita consultar la planilla. Para eso se agrega una herramienta de Google Sheets.
+El agente debe leer la tabla de comisiones mediante una herramienta.
 
-1. Agregar el nodo **Google Sheets Tool**.
+1. Agregar el nodo **Data Table Tool**.
 2. Renombrarlo:
 
 ```text
 Consultar comisiones disponibles
 ```
 
-3. Configurar la descripción manual de la herramienta:
+3. Seleccionar **Set Manually** en la descripción de la herramienta.
+4. Escribir:
 
 ```text
-Lee todas las filas de la hoja Comisiones. Devuelve curso, horario, id_comision, cupos_disponibles y estado_comision. Usá esta herramienta antes de asignar una vacante.
+Lee todas las filas de la tabla Clase 9 - Comisiones. Devuelve curso, horario, id_comision, cupos_disponibles y estado_comision. Usá esta herramienta antes de asignar una vacante.
 ```
 
-4. Seleccionar la credencial OAuth2 de Google Sheets.
-5. Seleccionar el documento de la planilla creada en el paso 1.
-6. Seleccionar la hoja `Comisiones`.
-7. Elegir la operación **Get Row(s)**.
-8. No agregar filtros.
-9. Conectar la salida `Tool` al puerto de herramientas de `Agente asignador`.
+5. Seleccionar:
+
+- **Resource:** `Row`;
+- **Operation:** `Get`;
+- **Data table:** `Clase 9 - Comisiones`;
+- **Return All:** activado.
+
+6. No agregar filtros.
+7. Conectar la salida `Tool` al puerto de herramientas de `Agente asignador`.
 
 La conexión debe quedar separada de la conexión principal:
 
@@ -270,7 +289,7 @@ Consultar comisiones disponibles ── herramienta ──> Agente asignador
 Datos del alumno ─────────────────── entrada ────> Agente asignador
 ```
 
-La herramienta no es un texto que el modelo lee automáticamente. Es una capacidad que el agente puede invocar cuando la necesita.
+La herramienta no es una instrucción escrita en el prompt. Es una capacidad que el agente puede invocar.
 
 ## 8. Crear el parser de la asignación
 
@@ -282,7 +301,7 @@ Parser salida de asignación
 ```
 
 3. Seleccionar **Generate from JSON Example**.
-4. Pegar este ejemplo:
+4. Pegar:
 
 ```json
 {
@@ -290,6 +309,7 @@ Parser salida de asignación
   "nombre_alumno": "Lucía Gómez",
   "correo_electronico": "lucia@example.com",
   "curso_solicitado": "Introducción a IA",
+  "preferencia_horaria": "sin preferencia",
   "id_comision": "COM-02",
   "horario_comision": "Miércoles 18:00",
   "estado_inscripcion": "inscripto",
@@ -325,7 +345,7 @@ cupos_disponibles_restantes = 2
 No continuar si:
 
 - el agente no tiene modelo conectado;
-- la herramienta no tiene credencial;
+- la herramienta no tiene seleccionada la tabla;
 - el agente elige `COM-01`, que está completa;
 - faltan campos en la salida;
 - devuelve texto fuera de la estructura esperada.
@@ -351,21 +371,11 @@ Valor derecho: inscripto
 La rama `true` será la de inscripción confirmada.
 La rama `false` será la de lista de espera.
 
-La representación debe quedar así:
-
-```text
-Agente asignador
-        ↓
-¿Hay cupo disponible?
-   ├── true
-   └── false
-```
-
-## 11. Crear el registro de inscripción
+## 11. Registrar la inscripción en Data Table
 
 Esta rama se ejecuta cuando el agente encontró una comisión.
 
-1. Agregar un nodo **Google Sheets**.
+1. Agregar un nodo **Data Table**.
 2. Conectarlo a la salida `true` de `¿Hay cupo disponible?`.
 3. Renombrarlo:
 
@@ -373,30 +383,33 @@ Esta rama se ejecuta cuando el agente encontró una comisión.
 Registrar inscripción
 ```
 
-4. Seleccionar la credencial de Google Sheets.
-5. Seleccionar el documento de la planilla.
-6. Seleccionar la hoja `Inscripciones`.
-7. Elegir la operación **Append Row**.
-8. Elegir el modo de mapeo manual, no automático.
-9. Agregar estos campos, uno por uno:
+4. Configurar:
 
-| Columna de la planilla | Expresión | Tipo |
-|---|---|---|
-| `id_inscripcion` | `{{ $json.output.id_inscripcion }}` | String |
-| `nombre_alumno` | `{{ $json.output.nombre_alumno }}` | String |
-| `correo_electronico` | `{{ $json.output.correo_electronico }}` | String |
-| `curso_solicitado` | `{{ $json.output.curso_solicitado }}` | String |
-| `id_comision` | `{{ $json.output.id_comision }}` | String |
-| `horario_comision` | `{{ $json.output.horario_comision }}` | String |
-| `estado_inscripcion` | `{{ $json.output.estado_inscripcion }}` | String |
-| `motivo_asignacion` | `{{ $json.output.motivo_asignacion }}` | String |
+- **Resource:** `Row`;
+- **Operation:** `Insert`;
+- **Data table:** `Clase 9 - Inscripciones`.
 
-10. Activar el modo **Expression** en cada valor dinámico.
-11. No escribir manualmente `COM-02`: debe llegar desde la salida del agente.
+5. En `Columns`, elegir el modo de mapeo manual.
+6. Agregar las columnas una por una:
+
+| Columna | Expresión |
+|---|---|
+| `id_inscripcion` | `{{ $json.output.id_inscripcion }}` |
+| `nombre_alumno` | `{{ $json.output.nombre_alumno }}` |
+| `correo_electronico` | `{{ $json.output.correo_electronico }}` |
+| `curso_solicitado` | `{{ $json.output.curso_solicitado }}` |
+| `preferencia_horaria` | `{{ $json.output.preferencia_horaria }}` |
+| `id_comision` | `{{ $json.output.id_comision }}` |
+| `horario_comision` | `{{ $json.output.horario_comision }}` |
+| `estado_inscripcion` | `{{ $json.output.estado_inscripcion }}` |
+| `motivo_asignacion` | `{{ $json.output.motivo_asignacion }}` |
+
+7. Activar **Expression** en cada valor dinámico.
+8. No escribir manualmente `COM-02`.
 
 ## 12. Actualizar el cupo
 
-1. Agregar otro nodo **Google Sheets**.
+1. Agregar otro nodo **Data Table**.
 2. Conectarlo desde `Registrar inscripción`.
 3. Renombrarlo:
 
@@ -404,28 +417,37 @@ Registrar inscripción
 Actualizar cupo de la comisión
 ```
 
-4. Seleccionar la misma credencial.
-5. Seleccionar el mismo documento.
-6. Seleccionar la hoja `Comisiones`.
-7. Elegir la operación **Update Row**.
-8. Configurar `id_comision` como columna de coincidencia.
-9. Agregar los valores a actualizar:
+4. Configurar:
+
+- **Resource:** `Row`;
+- **Operation:** `Update`;
+- **Data table:** `Clase 9 - Comisiones`;
+- **Must Match:** `All Conditions`.
+
+5. Agregar una condición de coincidencia:
+
+```text
+Columna: id_comision
+Condición: equals
+Valor: {{ $('Agente asignador').item.json.output.id_comision }}
+```
+
+6. En `Columns`, agregar los campos que se actualizan:
 
 | Campo | Expresión |
 |---|---|
-| `id_comision` | `{{ $('Agente asignador').item.json.output.id_comision }}` |
 | `cupos_disponibles` | `{{ $('Agente asignador').item.json.output.cupos_disponibles_restantes }}` |
 | `estado_comision` | `{{ $('Agente asignador').item.json.output.estado_comision }}` |
 
-La expresión `$('Agente asignador')` permite recuperar la salida de un nodo anterior aunque el nodo inmediato sea `Registrar inscripción`.
+La expresión `$('Agente asignador')` recupera la salida del agente aunque el nodo inmediatamente anterior sea `Registrar inscripción`.
 
-No actualizar la fila utilizando una posición fija. La coincidencia debe hacerse por `id_comision`.
+No utilizar una posición fija de fila: la coincidencia debe hacerse por `id_comision`.
 
-## 13. Crear el registro de lista de espera
+## 13. Registrar la lista de espera
 
 Esta rama se ejecuta cuando las tres comisiones están completas o no existe una comisión adecuada.
 
-1. Agregar otro nodo **Google Sheets**.
+1. Agregar otro nodo **Data Table**.
 2. Conectarlo a la salida `false` de `¿Hay cupo disponible?`.
 3. Renombrarlo:
 
@@ -433,28 +455,21 @@ Esta rama se ejecuta cuando las tres comisiones están completas o no existe una
 Registrar lista de espera
 ```
 
-4. Seleccionar la misma credencial, documento y hoja `Inscripciones`.
-5. Elegir **Append Row**.
-6. Crear los mismos campos del paso 11:
+4. Configurar:
 
-```text
-id_inscripcion
-nombre_alumno
-correo_electronico
-curso_solicitado
-id_comision
-horario_comision
-estado_inscripcion
-motivo_asignacion
-```
+- **Resource:** `Row`;
+- **Operation:** `Insert`;
+- **Data table:** `Clase 9 - Inscripciones`.
 
-7. Utilizar las expresiones:
+5. Agregar las mismas columnas del paso 11, una por una.
+6. Utilizar las expresiones:
 
 ```text
 {{ $json.output.id_inscripcion }}
 {{ $json.output.nombre_alumno }}
 {{ $json.output.correo_electronico }}
 {{ $json.output.curso_solicitado }}
+{{ $json.output.preferencia_horaria }}
 {{ $json.output.id_comision }}
 {{ $json.output.horario_comision }}
 {{ $json.output.estado_inscripcion }}
@@ -480,7 +495,7 @@ Agente redactor
 
 5. Seleccionar **Define below** como origen del mensaje.
 6. Activar **Require Specific Output Format**.
-7. Escribir este mensaje:
+7. Escribir:
 
 ```text
 Datos de la inscripción:
@@ -520,18 +535,11 @@ Configurar:
 
 ## 15. Conectar el modelo al segundo agente
 
-Se puede utilizar el mismo nodo `Modelo para los agentes`.
+Utilizar el mismo nodo `Modelo para los agentes`.
 
 1. Conectar nuevamente su salida `Language Model`.
 2. Llevarla al puerto `Chat Model` de `Agente redactor`.
 3. Confirmar que el mismo modelo esté conectado a los dos agentes.
-
-Debe haber dos conexiones desde el modelo:
-
-```text
-Modelo para los agentes → Agente asignador
-Modelo para los agentes → Agente redactor
-```
 
 ## 16. Crear el parser de la carta
 
@@ -580,35 +588,11 @@ Preparar flujo de envío
 | `cuerpo_correo` | `{{ $json.output.cuerpo }}` |
 | `tipo_respuesta` | `{{ $json.output.tipo_respuesta }}` |
 
-El resultado de este nodo es el contrato que recibiría el flujo de envío.
+El resultado es el contrato que recibiría un flujo de envío.
 
-## 18. Agregar el nodo Gmail, sin habilitarlo
+## 18. Prueba con una comisión disponible
 
-Este paso es opcional y sirve para mostrar la continuidad del flujo.
-
-1. Agregar un nodo **Gmail**.
-2. Conectarlo desde `Preparar flujo de envío`.
-3. Renombrarlo:
-
-```text
-Gmail - Enviar carta (deshabilitado)
-```
-
-4. Configurar destinatario, asunto y mensaje con:
-
-```text
-Destinatario: {{ $json.destinatario }}
-Asunto: {{ $json.asunto_correo }}
-Mensaje: {{ $json.cuerpo_correo }}
-```
-
-5. No configurar ni habilitar el envío durante la práctica.
-
-El objetivo de esta clase es llegar hasta una carta revisable. El correo no debe enviarse automáticamente.
-
-## 19. Primera prueba: inscripción con cupo
-
-Restaurar en Google Sheets estos valores:
+Restaurar en `Clase 9 - Comisiones`:
 
 ```text
 COM-01 → cupos_disponibles = 0
@@ -626,20 +610,17 @@ curso_solicitado = Introducción a IA
 preferencia_horaria = sin preferencia
 ```
 
-Ejecutar el workflow completo.
+Ejecutar el workflow completo y revisar los nodos en orden:
 
-Revisar en orden:
-
-1. `Datos del alumno`: cinco campos de entrada.
-2. `Agente asignador`: consulta la herramienta.
-3. `Parser salida de asignación`: devuelve la estructura esperada.
-4. `¿Hay cupo disponible?`: toma la rama `true`.
-5. `Registrar inscripción`: agrega una fila.
-6. `Actualizar cupo de la comisión`: actualiza `COM-02`.
-7. `Agente redactor`: genera el correo.
-8. `Parser salida de carta`: devuelve asunto y cuerpo.
-9. `Preparar flujo de envío`: deja el correo listo.
-10. Gmail: permanece deshabilitado.
+1. `Datos del alumno` recibe cinco campos.
+2. `Agente asignador` consulta la herramienta.
+3. `Parser salida de asignación` valida el resultado.
+4. `¿Hay cupo disponible?` toma la rama `true`.
+5. `Registrar inscripción` agrega una fila.
+6. `Actualizar cupo de la comisión` modifica `COM-02`.
+7. `Agente redactor` genera el correo.
+8. `Parser salida de carta` valida asunto y cuerpo.
+9. `Preparar flujo de envío` deja el correo listo.
 
 Resultado esperado:
 
@@ -652,7 +633,7 @@ estado: inscripto
 correo: preparado, no enviado
 ```
 
-## 20. Segunda prueba: otro alumno
+## 19. Prueba con otro alumno
 
 Cambiar en `Datos del alumno`:
 
@@ -662,20 +643,18 @@ nombre_alumno = Martín Rojas
 correo_electronico = martin@example.com
 ```
 
-Mantener el mismo curso y la misma preferencia.
-
 Ejecutar nuevamente y verificar:
 
-- que la inscripción se agregue como una nueva fila;
-- que el cupo se descuente nuevamente;
+- que se agregue una segunda fila;
+- que el cupo disminuya nuevamente;
 - que el correo utilice el nombre de Martín;
 - que no se reutilice el nombre de Lucía.
 
-Antes de hacer muchas pruebas, restaurar los cupos de la planilla.
+Restaurar los cupos antes de hacer más pruebas.
 
-## 21. Tercera prueba: lista de espera
+## 20. Prueba de lista de espera
 
-Cambiar temporalmente la hoja `Comisiones`:
+Modificar temporalmente `Clase 9 - Comisiones`:
 
 ```text
 COM-01 → cupos_disponibles = 0
@@ -683,7 +662,7 @@ COM-02 → cupos_disponibles = 0
 COM-03 → cupos_disponibles = 0
 ```
 
-Cambiar el identificador del alumno:
+En `Datos del alumno`, utilizar:
 
 ```text
 id_inscripcion = INS-003
@@ -697,79 +676,41 @@ Verificar:
 
 - `Agente asignador` devuelve `lista_espera`;
 - `¿Hay cupo disponible?` toma la rama `false`;
-- se agrega una fila en `Inscripciones`;
+- se agrega una fila a `Clase 9 - Inscripciones`;
 - no se actualiza ninguna comisión;
 - la carta informa lista de espera;
 - no se confirma ningún horario.
 
-Después de la prueba, restaurar los cupos de `Comisiones`.
+Después de la prueba, restaurar los cupos.
 
-## 22. Preguntas para observar el flujo
+## 21. Preguntas para observar el flujo
 
 - ¿Qué datos vienen del alumno?
 - ¿Qué datos consulta el agente?
 - ¿Qué información decide el agente?
-- ¿Qué información escribe directamente Google Sheets?
+- ¿Qué información escriben los nodos `Data Table`?
 - ¿Por qué el agente no debe inventar una comisión?
 - ¿Por qué usamos un parser?
 - ¿Qué diferencia hay entre `inscripto` y `lista_espera`?
 - ¿Qué ocurre si el agente asigna una comisión pero falla la actualización del cupo?
-- ¿Qué parte del correo debe ser generada y qué parte debe venir de la planilla?
+- ¿Qué parte del correo debe ser generada y qué parte debe venir de la tabla?
 - ¿Por qué separamos el agente asignador del agente redactor?
 
-## 23. Problemas frecuentes
+## 22. Límite del ejemplo
 
-### El agente no tiene modelo
+`Data Table` es adecuado para la práctica y para datos pequeños dentro de n8n. No debe presentarse como una base de datos transaccional completa.
 
-Revisar que `Modelo para los agentes` esté conectado al puerto `Chat Model` de los dos agentes.
+Si dos ejecuciones intentan ocupar simultáneamente el último lugar, el flujo necesitaría un mecanismo adicional de control de concurrencia.
 
-### El agente no utiliza Google Sheets
-
-Revisar que `Consultar comisiones disponibles` esté conectado al puerto `Tool` de `Agente asignador` y que el mensaje de sistema mencione el nombre exacto de la herramienta.
-
-### No encuentra la planilla
-
-Revisar la credencial, el documento y el nombre exacto de las hojas:
-
-```text
-Comisiones
-Inscripciones
-```
-
-### No encuentra una columna
-
-Comparar los encabezados de la planilla con los nombres utilizados en el workflow. No agregar espacios ni modificar los guiones bajos.
-
-### El cupo se actualiza en la comisión equivocada
-
-Revisar que `Actualizar cupo de la comisión` utilice la expresión del `id_comision` devuelto por `Agente asignador`.
-
-### La rama de lista de espera actualiza un cupo
-
-La salida `false` debe ir solamente a `Registrar lista de espera`, no a `Actualizar cupo de la comisión`.
-
-### El correo confirma una vacante inexistente
-
-Revisar el mensaje de sistema de `Agente redactor` y comprobar que diferencie `inscripto` de `lista_espera`.
-
-### Se envía un correo accidentalmente
-
-Mantener deshabilitado el nodo `Gmail - Enviar carta (deshabilitado)`.
-
-## 24. Límite del ejemplo
-
-Google Sheets es adecuado para la práctica y para volúmenes pequeños. Sin embargo, no ofrece una reserva transaccional robusta si dos personas intentan ocupar simultáneamente el último lugar.
-
-En un sistema real habría que agregar control de concurrencia, una operación atómica o una base de datos preparada para reservas.
-
-## 25. Criterio de finalización
+## 23. Criterio de finalización
 
 La construcción manual está completa cuando:
 
+- las dos tablas se crearon desde la interfaz de n8n;
 - el workflow comenzó desde un canvas vacío;
 - se creó cada nodo manualmente;
 - se crearon los campos uno por uno;
-- el agente consultó Google Sheets como herramienta;
+- el agente consultó `Data Table` como herramienta;
 - el parser devolvió una estructura válida;
 - se descartó una comisión completa;
 - se registró una inscripción disponible;
@@ -777,5 +718,14 @@ La construcción manual está completa cuando:
 - funcionó la rama de lista de espera;
 - el segundo agente redactó una carta personalizada;
 - la carta quedó preparada para el envío;
-- Gmail permaneció deshabilitado;
 - no se utilizaron nodos `Code` ni JavaScript.
+
+## 24. Archivo JSON de respaldo
+
+El archivo:
+
+```text
+n8n/Clase 9 - Inscripcion con agente y Data Table.json
+```
+
+contiene la versión armada del workflow. No es el material principal de la práctica. Se conserva para comparar, recuperar o repetir el ejercicio después de haber construido el flujo manualmente.

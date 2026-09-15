@@ -1,6 +1,6 @@
 {
-  "id": "clase9AgenteInscripcionSheets",
-  "name": "Clase 9 - Agente de IA para inscripciones en Google Sheets",
+  "id": "clase9AgenteInscripcionDataTable",
+  "name": "Clase 9 - Agente de IA para inscripciones con Data Table",
   "nodes": [
     {
       "parameters": {},
@@ -64,7 +64,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Datos del alumno:\n- ID de inscripción: {{ $json.id_inscripcion }}\n- Nombre: {{ $json.nombre_alumno }}\n- Correo: {{ $json.correo_electronico }}\n- Curso solicitado: {{ $json.curso_solicitado }}\n- Preferencia horaria: {{ $json.preferencia_horaria }}\n\nConsultá la herramienta \"Consultar comisiones disponibles\" antes de decidir. Luego devolvé únicamente la salida estructurada solicitada.",
+        "text": "=Datos del alumno:\\n- ID de inscripción: {{ $json.id_inscripcion }}\\n- Nombre: {{ $json.nombre_alumno }}\\n- Correo: {{ $json.correo_electronico }}\\n- Curso solicitado: {{ $json.curso_solicitado }}\\n- Preferencia horaria: {{ $json.preferencia_horaria }}\\n\\nConsultá la herramienta \"Consultar comisiones disponibles\" antes de decidir. Luego devolvé únicamente la salida estructurada solicitada.",
         "options": {
           "systemMessage": "Sos el agente asignador de un curso. Tu tarea es consultar la herramienta \"Consultar comisiones disponibles\", buscar comisiones del curso solicitado y asignar una vacante.\n\nReglas:\n1. Usá siempre la herramienta antes de decidir.\n2. Considerá solamente comisiones del curso solicitado.\n3. Descartá las comisiones con cupos_disponibles igual a 0.\n4. Si hay preferencia horaria, respetala cuando exista una comisión disponible.\n5. Si no hay preferencia, elegí la primera comisión disponible en el orden recibido.\n6. No inventes IDs, horarios, cupos ni cursos.\n7. Si no hay cupos, devolvé estado_inscripcion = lista_espera y dejá id_comision y horario_comision vacíos.\n8. Si asignás una comisión, restá una unidad a cupos_disponibles y devolvé ese valor en cupos_disponibles_restantes.\n9. Devolvé solamente la estructura definida por el parser.",
           "maxIterations": 5,
@@ -85,24 +85,24 @@
     {
       "parameters": {
         "descriptionType": "manual",
-        "toolDescription": "Lee todas las filas de la hoja Comisiones. Usá esta herramienta para consultar curso, horario, cupos_disponibles e id_comision antes de asignar una vacante.",
-        "authentication": "oAuth2",
-        "resource": "sheet",
-        "operation": "read",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
-        },
-        "sheetName": {
+        "toolDescription": "Lee todas las filas de la tabla Clase 9 - Comisiones. Devuelve curso, horario, id_comision, cupos_disponibles y estado_comision. Usá esta herramienta antes de asignar una vacante.",
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
           "__rl": true,
           "mode": "name",
-          "value": "Comisiones"
+          "value": "Clase 9 - Comisiones"
         },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": true,
+        "orderBy": false,
         "options": {}
       },
-      "type": "n8n-nodes-base.googleSheetsTool",
-      "typeVersion": 4.7,
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
       "position": [
         -560,
         260
@@ -125,7 +125,7 @@
         520
       ],
       "id": "node-openrouter-model",
-      "name": "OpenRouter Chat Model",
+      "name": "Modelo para los agentes",
       "credentials": {
         "openRouterApi": {
           "id": "oDFeg3BuyamQ6xnz",
@@ -136,7 +136,7 @@
     {
       "parameters": {
         "schemaType": "fromJson",
-        "jsonSchemaExample": "{\n  \"id_inscripcion\": \"INS-001\",\n  \"nombre_alumno\": \"Lucía Gómez\",\n  \"correo_electronico\": \"lucia@example.com\",\n  \"curso_solicitado\": \"Introducción a IA\",\n  \"id_comision\": \"COM-02\",\n  \"horario_comision\": \"Miércoles 18:00\",\n  \"estado_inscripcion\": \"inscripto\",\n  \"motivo_asignacion\": \"Primera comisión disponible para el curso solicitado\",\n  \"cupos_disponibles_restantes\": \"2\",\n  \"estado_comision\": \"disponible\"\n}"
+        "jsonSchemaExample": "{\n  \"id_inscripcion\": \"INS-001\",\n  \"nombre_alumno\": \"Lucía Gómez\",\n  \"correo_electronico\": \"lucia@example.com\",\n  \"curso_solicitado\": \"Introducción a IA\",\n  \"preferencia_horaria\": \"sin preferencia\",\n  \"id_comision\": \"COM-02\",\n  \"horario_comision\": \"Miércoles 18:00\",\n  \"estado_inscripcion\": \"inscripto\",\n  \"motivo_asignacion\": \"Primera comisión disponible\",\n  \"cupos_disponibles_restantes\": 2,\n  \"estado_comision\": \"disponible\"\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
@@ -182,30 +182,25 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "resource": "sheet",
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
-        },
-        "sheetName": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
           "__rl": true,
           "mode": "name",
-          "value": "Inscripciones"
+          "value": "Clase 9 - Inscripciones"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "id_inscripcion": "={ $('Agente asignador').item.json.output.id_inscripcion }",
-            "nombre_alumno": "={ $('Agente asignador').item.json.output.nombre_alumno }",
-            "correo_electronico": "={ $('Agente asignador').item.json.output.correo_electronico }",
-            "curso_solicitado": "={ $('Agente asignador').item.json.output.curso_solicitado }",
-            "id_comision": "={ $('Agente asignador').item.json.output.id_comision }",
-            "horario_comision": "={ $('Agente asignador').item.json.output.horario_comision }",
-            "estado_inscripcion": "={ $('Agente asignador').item.json.output.estado_inscripcion }",
-            "motivo_asignacion": "={ $('Agente asignador').item.json.output.motivo_asignacion }"
+            "id_inscripcion": "={ $json.output.id_inscripcion }",
+            "nombre_alumno": "={ $json.output.nombre_alumno }",
+            "correo_electronico": "={ $json.output.correo_electronico }",
+            "curso_solicitado": "={ $json.output.curso_solicitado }",
+            "preferencia_horaria": "={ $json.output.preferencia_horaria }",
+            "id_comision": "={ $json.output.id_comision }",
+            "horario_comision": "={ $json.output.horario_comision }",
+            "estado_inscripcion": "={ $json.output.estado_inscripcion }",
+            "motivo_asignacion": "={ $json.output.motivo_asignacion }"
           },
           "matchingColumns": [],
           "schema": [
@@ -216,7 +211,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "nombre_alumno",
@@ -225,7 +221,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "correo_electronico",
@@ -234,7 +231,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "curso_solicitado",
@@ -243,16 +241,28 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "preferencia_horaria",
+              "displayName": "preferencia_horaria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "id_comision",
               "displayName": "id_comision",
               "required": false,
-              "defaultMatch": true,
+              "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "horario_comision",
@@ -261,7 +271,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "estado_inscripcion",
@@ -270,7 +281,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "motivo_asignacion",
@@ -279,14 +291,17 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             }
-          ]
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
       "position": [
         120,
         -100
@@ -296,30 +311,25 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "resource": "sheet",
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
-        },
-        "sheetName": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
           "__rl": true,
           "mode": "name",
-          "value": "Inscripciones"
+          "value": "Clase 9 - Inscripciones"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "id_inscripcion": "={ $('Agente asignador').item.json.output.id_inscripcion }",
-            "nombre_alumno": "={ $('Agente asignador').item.json.output.nombre_alumno }",
-            "correo_electronico": "={ $('Agente asignador').item.json.output.correo_electronico }",
-            "curso_solicitado": "={ $('Agente asignador').item.json.output.curso_solicitado }",
-            "id_comision": "={ $('Agente asignador').item.json.output.id_comision }",
-            "horario_comision": "={ $('Agente asignador').item.json.output.horario_comision }",
-            "estado_inscripcion": "={ $('Agente asignador').item.json.output.estado_inscripcion }",
-            "motivo_asignacion": "={ $('Agente asignador').item.json.output.motivo_asignacion }"
+            "id_inscripcion": "={ $json.output.id_inscripcion }",
+            "nombre_alumno": "={ $json.output.nombre_alumno }",
+            "correo_electronico": "={ $json.output.correo_electronico }",
+            "curso_solicitado": "={ $json.output.curso_solicitado }",
+            "preferencia_horaria": "={ $json.output.preferencia_horaria }",
+            "id_comision": "={ $json.output.id_comision }",
+            "horario_comision": "={ $json.output.horario_comision }",
+            "estado_inscripcion": "={ $json.output.estado_inscripcion }",
+            "motivo_asignacion": "={ $json.output.motivo_asignacion }"
           },
           "matchingColumns": [],
           "schema": [
@@ -330,7 +340,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "nombre_alumno",
@@ -339,7 +350,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "correo_electronico",
@@ -348,7 +360,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "curso_solicitado",
@@ -357,16 +370,28 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "preferencia_horaria",
+              "displayName": "preferencia_horaria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "id_comision",
               "displayName": "id_comision",
               "required": false,
-              "defaultMatch": true,
+              "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "horario_comision",
@@ -375,7 +400,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "estado_inscripcion",
@@ -384,7 +410,8 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "motivo_asignacion",
@@ -393,14 +420,17 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             }
-          ]
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
       "position": [
         120,
         140
@@ -410,47 +440,40 @@
     },
     {
       "parameters": {
-        "authentication": "oAuth2",
-        "resource": "sheet",
+        "resource": "row",
         "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
-        },
-        "sheetName": {
+        "dataTableId": {
           "__rl": true,
           "mode": "name",
-          "value": "Comisiones"
+          "value": "Clase 9 - Comisiones"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id_comision",
+              "condition": "eq",
+              "keyValue": "={{ $('Agente asignador').item.json.output.id_comision }}"
+            }
+          ]
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "id_comision": "={{ $('Agente asignador').item.json.output.id_comision }}",
             "cupos_disponibles": "={{ $('Agente asignador').item.json.output.cupos_disponibles_restantes }}",
             "estado_comision": "={{ $('Agente asignador').item.json.output.estado_comision }}"
           },
-          "matchingColumns": [
-            "id_comision"
-          ],
+          "matchingColumns": [],
           "schema": [
-            {
-              "id": "id_comision",
-              "displayName": "id_comision",
-              "required": false,
-              "defaultMatch": true,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
             {
               "id": "cupos_disponibles",
               "displayName": "cupos_disponibles",
               "required": false,
               "defaultMatch": false,
               "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
+              "type": "number",
+              "readOnly": false,
+              "removed": false
             },
             {
               "id": "estado_comision",
@@ -459,14 +482,17 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "readOnly": false,
+              "removed": false
             }
-          ]
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
       "position": [
         360,
         -100
@@ -635,22 +661,6 @@
         ]
       ]
     },
-    "OpenRouter Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Agente asignador",
-            "type": "ai_languageModel",
-            "index": 0
-          },
-          {
-            "node": "Agente redactor",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Parser salida de asignación": {
       "ai_outputParser": [
         [
@@ -752,6 +762,22 @@
           {
             "node": "Gmail - Enviar carta (deshabilitado)",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelo para los agentes": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente asignador",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente redactor",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
