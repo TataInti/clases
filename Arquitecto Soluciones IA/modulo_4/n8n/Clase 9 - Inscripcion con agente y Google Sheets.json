@@ -1,0 +1,770 @@
+{
+  "id": "clase9AgenteInscripcionSheets",
+  "name": "Clase 9 - Agente de IA para inscripciones en Google Sheets",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        0
+      ],
+      "id": "node-manual-trigger",
+      "name": "Inicio manual"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-id_inscripcion",
+              "name": "id_inscripcion",
+              "value": "INS-001",
+              "type": "string"
+            },
+            {
+              "id": "id-nombre_alumno",
+              "name": "nombre_alumno",
+              "value": "Lucía Gómez",
+              "type": "string"
+            },
+            {
+              "id": "id-correo_electronico",
+              "name": "correo_electronico",
+              "value": "lucia@example.com",
+              "type": "string"
+            },
+            {
+              "id": "id-curso_solicitado",
+              "name": "curso_solicitado",
+              "value": "Introducción a IA",
+              "type": "string"
+            },
+            {
+              "id": "id-preferencia_horaria",
+              "name": "preferencia_horaria",
+              "value": "sin preferencia",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1000,
+        0
+      ],
+      "id": "node-student-data",
+      "name": "Datos del alumno"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Datos del alumno:\n- ID de inscripción: {{ $json.id_inscripcion }}\n- Nombre: {{ $json.nombre_alumno }}\n- Correo: {{ $json.correo_electronico }}\n- Curso solicitado: {{ $json.curso_solicitado }}\n- Preferencia horaria: {{ $json.preferencia_horaria }}\n\nConsultá la herramienta \"Consultar comisiones disponibles\" antes de decidir. Luego devolvé únicamente la salida estructurada solicitada.",
+        "options": {
+          "systemMessage": "Sos el agente asignador de un curso. Tu tarea es consultar la herramienta \"Consultar comisiones disponibles\", buscar comisiones del curso solicitado y asignar una vacante.\n\nReglas:\n1. Usá siempre la herramienta antes de decidir.\n2. Considerá solamente comisiones del curso solicitado.\n3. Descartá las comisiones con cupos_disponibles igual a 0.\n4. Si hay preferencia horaria, respetala cuando exista una comisión disponible.\n5. Si no hay preferencia, elegí la primera comisión disponible en el orden recibido.\n6. No inventes IDs, horarios, cupos ni cursos.\n7. Si no hay cupos, devolvé estado_inscripcion = lista_espera y dejá id_comision y horario_comision vacíos.\n8. Si asignás una comisión, restá una unidad a cupos_disponibles y devolvé ese valor en cupos_disponibles_restantes.\n9. Devolvé solamente la estructura definida por el parser.",
+          "maxIterations": 5,
+          "returnIntermediateSteps": false,
+          "enableStreaming": false
+        },
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -560,
+        0
+      ],
+      "id": "node-assignment-agent",
+      "name": "Agente asignador"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lee todas las filas de la hoja Comisiones. Usá esta herramienta para consultar curso, horario, cupos_disponibles e id_comision antes de asignar una vacante.",
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Comisiones"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        260
+      ],
+      "id": "node-sheets-tool",
+      "name": "Consultar comisiones disponibles"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1-mini",
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 1200
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        520
+      ],
+      "id": "node-openrouter-model",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "oDFeg3BuyamQ6xnz",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n  \"id_inscripcion\": \"INS-001\",\n  \"nombre_alumno\": \"Lucía Gómez\",\n  \"correo_electronico\": \"lucia@example.com\",\n  \"curso_solicitado\": \"Introducción a IA\",\n  \"id_comision\": \"COM-02\",\n  \"horario_comision\": \"Miércoles 18:00\",\n  \"estado_inscripcion\": \"inscripto\",\n  \"motivo_asignacion\": \"Primera comisión disponible para el curso solicitado\",\n  \"cupos_disponibles_restantes\": \"2\",\n  \"estado_comision\": \"disponible\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -300,
+        260
+      ],
+      "id": "node-assignment-parser",
+      "name": "Parser salida de asignación"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "condition-has-seat",
+              "leftValue": "={{ $json.output.estado_inscripcion }}",
+              "rightValue": "inscripto",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -120,
+        0
+      ],
+      "id": "node-has-seat-if",
+      "name": "¿Hay cupo disponible?"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Inscripciones"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_inscripcion": "={ $('Agente asignador').item.json.output.id_inscripcion }",
+            "nombre_alumno": "={ $('Agente asignador').item.json.output.nombre_alumno }",
+            "correo_electronico": "={ $('Agente asignador').item.json.output.correo_electronico }",
+            "curso_solicitado": "={ $('Agente asignador').item.json.output.curso_solicitado }",
+            "id_comision": "={ $('Agente asignador').item.json.output.id_comision }",
+            "horario_comision": "={ $('Agente asignador').item.json.output.horario_comision }",
+            "estado_inscripcion": "={ $('Agente asignador').item.json.output.estado_inscripcion }",
+            "motivo_asignacion": "={ $('Agente asignador').item.json.output.motivo_asignacion }"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_inscripcion",
+              "displayName": "id_inscripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nombre_alumno",
+              "displayName": "nombre_alumno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "correo_electronico",
+              "displayName": "correo_electronico",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "curso_solicitado",
+              "displayName": "curso_solicitado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id_comision",
+              "displayName": "id_comision",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "horario_comision",
+              "displayName": "horario_comision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_inscripcion",
+              "displayName": "estado_inscripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo_asignacion",
+              "displayName": "motivo_asignacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        120,
+        -100
+      ],
+      "id": "node-register-enrollment",
+      "name": "Registrar inscripción"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Inscripciones"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_inscripcion": "={ $('Agente asignador').item.json.output.id_inscripcion }",
+            "nombre_alumno": "={ $('Agente asignador').item.json.output.nombre_alumno }",
+            "correo_electronico": "={ $('Agente asignador').item.json.output.correo_electronico }",
+            "curso_solicitado": "={ $('Agente asignador').item.json.output.curso_solicitado }",
+            "id_comision": "={ $('Agente asignador').item.json.output.id_comision }",
+            "horario_comision": "={ $('Agente asignador').item.json.output.horario_comision }",
+            "estado_inscripcion": "={ $('Agente asignador').item.json.output.estado_inscripcion }",
+            "motivo_asignacion": "={ $('Agente asignador').item.json.output.motivo_asignacion }"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_inscripcion",
+              "displayName": "id_inscripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nombre_alumno",
+              "displayName": "nombre_alumno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "correo_electronico",
+              "displayName": "correo_electronico",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "curso_solicitado",
+              "displayName": "curso_solicitado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id_comision",
+              "displayName": "id_comision",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "horario_comision",
+              "displayName": "horario_comision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_inscripcion",
+              "displayName": "estado_inscripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo_asignacion",
+              "displayName": "motivo_asignacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        120,
+        140
+      ],
+      "id": "node-register-waitlist",
+      "name": "Registrar lista de espera"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_ID_DE_LA_PLANILLA"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Comisiones"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_comision": "={{ $('Agente asignador').item.json.output.id_comision }}",
+            "cupos_disponibles": "={{ $('Agente asignador').item.json.output.cupos_disponibles_restantes }}",
+            "estado_comision": "={{ $('Agente asignador').item.json.output.estado_comision }}"
+          },
+          "matchingColumns": [
+            "id_comision"
+          ],
+          "schema": [
+            {
+              "id": "id_comision",
+              "displayName": "id_comision",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cupos_disponibles",
+              "displayName": "cupos_disponibles",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_comision",
+              "displayName": "estado_comision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        360,
+        -100
+      ],
+      "id": "node-update-commission",
+      "name": "Actualizar cupo de la comisión"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Datos confirmados por el agente asignador:\n- ID de inscripción: {{ $('Agente asignador').item.json.output.id_inscripcion }}\n- Nombre: {{ $('Agente asignador').item.json.output.nombre_alumno }}\n- Correo: {{ $('Agente asignador').item.json.output.correo_electronico }}\n- Curso: {{ $('Agente asignador').item.json.output.curso_solicitado }}\n- Comisión: {{ $('Agente asignador').item.json.output.id_comision }}\n- Horario: {{ $('Agente asignador').item.json.output.horario_comision }}\n- Estado: {{ $('Agente asignador').item.json.output.estado_inscripcion }}\n- Motivo: {{ $('Agente asignador').item.json.output.motivo_asignacion }}\n\nRedactá la carta personalizada y devolvé únicamente la salida estructurada.",
+        "options": {
+          "systemMessage": "Sos el agente redactor de una institución educativa. Redactá un correo claro, cordial y breve en español argentino formal.\n\nSi estado_inscripcion es inscripto, confirmá la inscripción e incluí exactamente el curso, la comisión y el horario recibidos.\nSi estado_inscripcion es lista_espera, no confirmes una vacante: explicá que el pedido queda en lista de espera.\nNo inventes fechas, lugares, enlaces, requisitos ni datos que no estén en la entrada.\nNo uses Markdown. Devolvé solamente destinatario, asunto, cuerpo y tipo_respuesta.",
+          "maxIterations": 3,
+          "returnIntermediateSteps": false,
+          "enableStreaming": false
+        },
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        620,
+        0
+      ],
+      "id": "node-email-agent",
+      "name": "Agente redactor"
+    },
+    {
+      "parameters": {
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n  \"destinatario\": \"lucia@example.com\",\n  \"asunto\": \"Confirmación de inscripción al curso\",\n  \"cuerpo\": \"Hola Lucía Gómez,\\n\\nTu inscripción fue registrada.\",\n  \"tipo_respuesta\": \"confirmacion\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        620,
+        260
+      ],
+      "id": "node-email-parser",
+      "name": "Parser salida de carta"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-id_inscripcion",
+              "name": "id_inscripcion",
+              "value": "={{ $('Agente asignador').item.json.output.id_inscripcion }}",
+              "type": "string"
+            },
+            {
+              "id": "id-nombre_alumno",
+              "name": "nombre_alumno",
+              "value": "={{ $('Agente asignador').item.json.output.nombre_alumno }}",
+              "type": "string"
+            },
+            {
+              "id": "id-correo_electronico",
+              "name": "correo_electronico",
+              "value": "={{ $('Agente asignador').item.json.output.correo_electronico }}",
+              "type": "string"
+            },
+            {
+              "id": "id-id_comision",
+              "name": "id_comision",
+              "value": "={{ $('Agente asignador').item.json.output.id_comision }}",
+              "type": "string"
+            },
+            {
+              "id": "id-estado_inscripcion",
+              "name": "estado_inscripcion",
+              "value": "={{ $('Agente asignador').item.json.output.estado_inscripcion }}",
+              "type": "string"
+            },
+            {
+              "id": "id-destinatario",
+              "name": "destinatario",
+              "value": "={{ $json.output.destinatario }}",
+              "type": "string"
+            },
+            {
+              "id": "id-asunto_correo",
+              "name": "asunto_correo",
+              "value": "={{ $json.output.asunto }}",
+              "type": "string"
+            },
+            {
+              "id": "id-cuerpo_correo",
+              "name": "cuerpo_correo",
+              "value": "={{ $json.output.cuerpo }}",
+              "type": "string"
+            },
+            {
+              "id": "id-tipo_respuesta",
+              "name": "tipo_respuesta",
+              "value": "={{ $json.output.tipo_respuesta }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        0
+      ],
+      "id": "node-prepare-email",
+      "name": "Preparar flujo de envío"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.destinatario }}",
+        "subject": "={{ $json.asunto_correo }}",
+        "message": "={{ $json.cuerpo_correo }}",
+        "emailType": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        0
+      ],
+      "id": "node-gmail-disabled",
+      "name": "Gmail - Enviar carta (deshabilitado)",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Inicio manual": {
+      "main": [
+        [
+          {
+            "node": "Datos del alumno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos del alumno": {
+      "main": [
+        [
+          {
+            "node": "Agente asignador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar comisiones disponibles": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente asignador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente asignador",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente redactor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser salida de asignación": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agente asignador",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente asignador": {
+      "main": [
+        [
+          {
+            "node": "¿Hay cupo disponible?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay cupo disponible?": {
+      "main": [
+        [
+          {
+            "node": "Registrar inscripción",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar lista de espera",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar inscripción": {
+      "main": [
+        [
+          {
+            "node": "Actualizar cupo de la comisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar cupo de la comisión": {
+      "main": [
+        [
+          {
+            "node": "Agente redactor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar lista de espera": {
+      "main": [
+        [
+          {
+            "node": "Agente redactor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser salida de carta": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agente redactor",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente redactor": {
+      "main": [
+        [
+          {
+            "node": "Preparar flujo de envío",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar flujo de envío": {
+      "main": [
+        [
+          {
+            "node": "Gmail - Enviar carta (deshabilitado)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c9d9d8b1-2f96-4c13-9d4c-9f0e8c1a9b21",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
