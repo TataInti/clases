@@ -207,7 +207,7 @@ def cargar_modelo():
     """
     ruta = hf_hub_download(
         repo_id="unsloth/LFM2.5-1.2B-Instruct-GGUF",   # ← CAMBIAR: el modelo
-        filename="LFM2.5-1.2B-Instruct-Q8_0.gguf",     # ← CAMBIAR: el archivo
+        filename="LFM2.5-1.2B-Instruct-Q4_0.gguf",     # ← CAMBIAR: el archivo
     )
     return Llama(model_path=ruta, n_ctx=2048, n_gpu_layers=0, verbose=False)
 
