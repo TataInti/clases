@@ -1,210 +1,525 @@
-# Clase 2 — Personalizar y mejorar la app con IA (Semana 1)
+# Clase 2 — Vibe coding: mejorar una app con IA sin perder el control
 
-> **Formato:** Turno 2 de la Semana 1 (2 horas). Partimos de la app que ya funciona (Clase 1) y la hacemos **tuya**. Primero la personalizamos a mano y después aprendemos a **vibe coding**: darle instrucciones a una IA (Claude, ChatGPT, etc.) para que produzca y mejore software por nosotros.
+> **Formato:** Turno 2 de la Semana 1 (2 horas). Partimos del chatbot funcional de la Clase 1 y usamos un agente de inteligencia artificial para mejorarlo de manera gradual, entendible y comprobable.
+
+## Pregunta central de la clase
+
+> ¿Cómo podemos usar un agente de inteligencia artificial para modificar una aplicación sin aceptar código a ciegas ni convertir una solución sencilla en algo innecesariamente complejo?
 
 ## Objetivos de la clase
 
-- Personalizar la app web (títulos, textos, estilo) sin romper nada.
-- Entender qué es el **vibe coding** y cómo darle instrucciones a una IA.
-- Usar una IA para **mejorar** la app con funciones nuevas.
-- Revisar y decidir qué cambios quedan, manteniendo el criterio humano.
+- Entender qué es el **vibe coding** o programación asistida con IA.
+- Aprender a pedir código concreto, útil y comprobable.
+- Reconocer los riesgos de la sobreingeniería.
+- Reconocer los riesgos de ejecutar código que no entendemos.
+- Mantener siempre una versión funcional de la aplicación.
+- Realizar un cambio por vez y comprobarlo antes de continuar.
+- Incorporar un `system prompt` separado de la pregunta del usuario.
+- Mejorar la interfaz del chatbot con componentes sencillos de Streamlit.
 
-## Cómo usar esta guía (leela paso a paso)
+## Producto final
 
-Este documento es **tu guía de clase**: lo vas a leer de arriba hacia abajo y hacer lo que dice en orden. Cada sección te dice **qué hacer** y **qué esperar**. No saltees pasos: cada uno construye sobre el anterior.
+Al terminar la clase, nuestro chatbot tendrá:
 
-### Convenciones que vas a encontrar
+- un `system prompt` que define cómo debe comportarse;
+- respuestas finales sin el razonamiento interno del modelo;
+- respuestas renderizadas como Markdown;
+- información visible sobre el modelo utilizado;
+- historial de conversación;
+- un botón para borrar la conversación;
+- un contador de mensajes;
+- una pequeña mejora opcional de Streamlit.
+
+## Cómo usar esta guía
+
+Esta clase funciona como un laboratorio. No vamos a pedirle a la IA que rehaga toda la aplicación. Vamos a trabajar siempre con el mismo ciclo:
+
+```text
+Observar → Pedir un cambio → Leer → Modificar → Probar → Conservar o deshacer
+```
+
+### Convenciones
 
 | Símbolo | Significado |
 |---|---|
-| ✏️ **Editar** | Tenés que modificar un archivo que ya creaste (`app.py`) |
-| ▶️ **Ejecutar** | Tenés que correr algo y mirar el resultado |
-| 💡 **Concepto** | Explicación teórica: leela y entendela, no hay que ejecutar nada |
-| ✅ **Verificar** | Comprobación de que el paso anterior funcionó |
+| 💡 **Concepto** | Una idea que necesitamos comprender antes de programar |
+| 🤖 **Pedido al agente** | Una instrucción que podemos darle a una IA |
+| ✏️ **Editar** | Un cambio que realizaremos en `app.py` |
+| ▶️ **Ejecutar** | Probar la aplicación |
+| ✅ **Verificar** | Comprobar un resultado esperado |
+| ⚠️ **Riesgo** | Algo que debemos revisar antes de aceptar o ejecutar |
 
-### Regla de oro de la guía
+### Regla principal
 
-> **Un paso a la vez.** Después de cada paso, verificá que funcionó antes de seguir. Si algo falla, el error casi siempre está en el paso anterior.
+> La IA puede proponer y escribir código, pero la persona sigue siendo responsable de comprenderlo, probarlo y decidir si lo acepta.
 
 ---
 
-## 1. Personalizar la app (ejercicio guiado)
+## 1. Empezar desde una aplicación que funciona — 10 minutos
 
-La app ya funciona (Clase 1). Ahora la hacemos **tuya**. La app se recarga sola cada vez que guardás el archivo, así que vas a ver los cambios al instante.
+Antes de mejorar el chatbot, comprobamos que el punto de partida funciona.
 
-### ✏️ Paso 1.1 — Cambiar el título
+### ▶️ Ejecutar
 
-En `app.py`, buscá la línea `st.title("🤖 Chatbot del curso")` y cambiá el texto entre comillas por un título con tu nombre o el de tu proyecto:
+En la terminal, dentro de la carpeta del proyecto:
 
-```python
-st.title("🤖 Mi asistente de IA")
+```bash
+streamlit run app.py
 ```
 
-### ✅ Verificar
+### ✅ Verificar el punto de partida
 
-Guardá (Ctrl+S) y mirá el navegador: el título grande debería cambiar al instante.
+- El modelo carga correctamente.
+- Podemos escribir una pregunta.
+- El chatbot muestra una respuesta.
+- Los mensajes anteriores permanecen en pantalla.
+- Podemos enviar una segunda pregunta.
 
-### ✏️ Paso 1.2 — Cambiar el subtítulo
+### Guardar una copia funcional
 
-Buscá la línea `st.caption(...)` y cambiá el texto:
+Antes de aceptar cambios generados por una IA, guardá una copia del archivo con el nombre:
 
-```python
-st.caption("Asistente personal de Inti")
+```text
+app_clase1_funcional.py
 ```
 
-### ✅ Verificar
+Esta copia es un respaldo. Si una modificación rompe la aplicación, podremos comparar ambos archivos o volver al punto de partida.
 
-El texto pequeño debajo del título debería cambiar.
+> **Buena práctica:** no empieces una mejora sin saber si el programa ya funcionaba. De lo contrario, no podrás distinguir un problema anterior de uno producido por el cambio.
 
-### ✏️ Paso 1.3 — Cambiar el placeholder
+---
 
-Buscá la línea `st.chat_input("Escribí tu pregunta sobre el curso...")` y cambiá el texto:
+## 2. ¿Qué es el vibe coding? — 15 minutos
 
-```python
-pregunta = st.chat_input("Preguntame lo que quieras...")
+El **vibe coding** es una forma de programar en la que describimos a una inteligencia artificial qué queremos construir o modificar, y la IA propone el código.
+
+El trabajo no termina cuando la IA entrega una respuesta:
+
+```text
+Necesidad
+   ↓
+Pedido al agente
+   ↓
+Código propuesto
+   ↓
+Revisión humana
+   ↓
+Prueba
+   ↓
+Aceptar, corregir o deshacer
 ```
 
-### ✅ Verificar
+### ¿Quién es responsable de cada decisión?
 
-El texto gris dentro de la caja de chat debería cambiar.
+| Responsabilidad | Persona | Agente de IA |
+|---|:---:|:---:|
+| Definir el objetivo | Sí | No |
+| Proponer código | Puede | Sí |
+| Explicar el cambio | Lo solicita y revisa | Sí |
+| Decidir si el cambio es necesario | Sí | No |
+| Ejecutar y comprobar | Sí | No |
+| Aceptar el resultado final | Sí | No |
 
-### ✏️ Paso 1.4 — Cambiar el estilo de respuesta
+> El agente puede escribir código muy rápido. Eso no significa que el código sea necesario, correcto, seguro o compatible con nuestra aplicación.
 
-Buscá el prompt dentro de `responder()` y cambiá la instrucción:
+---
+
+## 3. Riesgos de programar con agentes — 15 minutos
+
+### 3.1 Sobreingeniería
+
+La **sobreingeniería** aparece cuando una solución incorpora más estructura y complejidad de la necesaria.
+
+Para agregar un botón sencillo, un agente podría intentar:
+
+- crear varios archivos nuevos;
+- introducir clases y patrones avanzados;
+- instalar dependencias adicionales;
+- agregar una base de datos;
+- crear un sistema de configuración;
+- cambiar la carga del modelo;
+- reescribir todo `app.py`.
+
+Nada de eso es necesario para agregar un botón de Streamlit.
+
+### Señales de alerta
+
+- Modifica partes que no estaban incluidas en el pedido.
+- Reemplaza todo el archivo para cambiar pocas líneas.
+- Agrega librerías sin explicar por qué.
+- Crea muchas funciones o archivos para una tarea pequeña.
+- Cambia nombres o estructuras que ya funcionaban.
+- Entrega código que no podemos explicar.
+
+### 3.2 Ejecutar código que no entendemos
+
+Antes de copiar o ejecutar código generado por una IA, debemos revisar especialmente instrucciones como:
 
 ```python
-prompt = f"Respondé como un tutor paciente y didáctico.\n\nPregunta: {pregunta}\n\nRespuesta:"
+eval(...)
+exec(...)
+subprocess.run(...)
+os.system(...)
 ```
 
-### ✅ Verificar
+También debemos detenernos si el agente propone:
 
-Enviá una pregunta nueva: la respuesta debería sonar más didáctica.
+- eliminar o mover archivos;
+- instalar paquetes desconocidos;
+- conectarse a servicios externos;
+- leer contraseñas, tokens o claves;
+- subir archivos personales;
+- modificar carpetas ajenas al proyecto.
 
-### ✏️ Paso 1.5 — Probar la temperatura
+> **Regla de seguridad:** si no podés explicar qué hace una línea potencialmente sensible, no la ejecutes. Primero pedile al agente que la explique o consultá al docente.
 
-Buscá `temperature=0.7` y probá estos tres valores, uno a la vez:
+---
 
-| Valor | Efecto |
+## 4. Cómo pedir código útil y comprobable — 15 minutos
+
+Un buen pedido de programación tiene seis componentes:
+
+| Componente | Pregunta que responde |
 |---|---|
-| `0.0` | Siempre la misma respuesta, más precisa pero rígida |
-| `0.7` | Equilibrio entre precisión y naturalidad |
-| `1.5` | Muy creativo, puede inventar más |
+| Contexto | ¿Qué aplicación tengo? |
+| Estado actual | ¿Qué funciona ahora? |
+| Cambio | ¿Qué quiero agregar? |
+| Alcance | ¿Qué parte puede modificar? |
+| Restricciones | ¿Qué no debe tocar? |
+| Comprobación | ¿Cómo sabré que funciona? |
 
-### ✅ Verificar
+### Un pedido demasiado abierto
 
-Enviá la misma pregunta con cada valor y compará las respuestas.
+```text
+Mejorá mi chatbot y hacelo más profesional.
+```
 
-> **Regla de oro:** cada vez que cambies algo, preguntate *"¿qué espero que cambie en pantalla?"*. Si no cambia nada, revisá que guardaste el archivo.
+El agente tendrá que adivinar qué significa “mejorar”. Puede modificar demasiado, agregar funciones que no necesitamos o romper algo que ya funcionaba.
+
+### Plantilla para trabajar con el agente
+
+```text
+Tengo una aplicación de chatbot hecha con Python, Streamlit
+y llama-cpp-python.
+
+Actualmente funciona y [DESCRIBIR QUÉ HACE].
+
+Quiero agregar solamente [UN CAMBIO CONCRETO].
+
+Podés modificar [INDICAR EL BLOQUE PERMITIDO].
+
+No cambies:
+- la carga del modelo;
+- otras funciones que ya funcionan;
+- las dependencias del proyecto.
+
+Antes de darme el código:
+1. Explicá qué vas a modificar.
+2. Indicá si la aplicación ya tiene parte de esa funcionalidad.
+3. Señalá cualquier riesgo o supuesto.
+
+Después:
+1. Mostrá solamente los bloques que debo cambiar.
+2. Explicá cada cambio con palabras sencillas.
+3. Proponé tres pruebas para comprobarlo.
+```
 
 ---
 
-## 2. Vibe coding: programar con ayuda de una IA
+## 5. Primera mejora: incorporar un system prompt — 25 minutos
 
-Hasta acá escribimos el código a mano, paso a paso. Pero en el mundo real, cada vez más se programa **con la ayuda de una IA** que escribe el código por nosotros. A eso se lo llama **vibe coding** ("programar por vibra"): vos le explicás a la IA **qué querés**, y ella te devuelve **el código**.
+El primer cambio será sobre la función `responder()`. Lo hacemos antes de modificar la interfaz porque define el comportamiento central del chatbot.
 
-### 💡 Concepto: ¿qué es el vibe coding?
+### 💡 ¿Qué es un system prompt?
 
-**Vibe coding** es la práctica de usar un asistente de IA (Claude, ChatGPT, GitHub Copilot, etc.) para generar, modificar y depurar código. En vez de escribir cada línea, **describís el resultado deseado** y la IA lo implementa.
+Un `system prompt` es una instrucción que define el rol, el estilo y los límites generales del asistente. No es una pregunta del usuario: es parte de la configuración de la aplicación.
 
-| Rol | Quién lo hace |
+Vamos a separar dos tipos de mensajes:
+
+| Rol | Contenido |
 |---|---|
-| **Describir qué querés** | Vos (la persona) |
-| **Escribir el código** | La IA |
-| **Revisar y decidir** | Vos (la persona) |
+| `system` | Cómo debe comportarse el asistente |
+| `user` | La pregunta escrita en el chat |
 
-> **La clave del vibe coding:** la IA no reemplaza tu criterio. Vos seguís siendo quien **decide qué es correcto**, qué se ve bien y qué funciona. La IA acelera, pero el criterio es tuyo. Por eso aprendimos las 3 capas y el frontend/backend: para poder **entender y revisar** lo que la IA produce.
+### Comportamiento que buscamos
 
-### 💡 Concepto: cómo darle instrucciones a una IA
+Nuestro chatbot debe:
 
-Para que una IA produzca buen código, hay que darle **buenas instrucciones** (prompts). Un buen prompt para programar tiene 4 ingredientes:
+- responder en español claro;
+- actuar como asistente educativo;
+- explicar conceptos con palabras sencillas;
+- usar ejemplos breves cuando ayuden;
+- reconocer cuando no conoce una respuesta;
+- no inventar datos ni acciones realizadas;
+- usar Markdown cuando mejore la lectura.
 
-| Ingrediente | Pregunta que responde | Ejemplo |
-|---|---|---|
-| **Rol** | ¿Quién es la IA? | "Sos un experto en Streamlit" |
-| **Contexto** | ¿Qué tenemos? | "Tengo una app de chat en `app.py`" |
-| **Tarea** | ¿Qué querés que haga? | "Agregá un botón para borrar el historial" |
-| **Restricciones** | ¿Cómo lo querés? | "En español, con comentarios, sin cambiar la capa de modelo" |
+### 🤖 Pedido al agente
 
-**La fórmula del prompt perfecto:**
+Pegá el contenido actual de `app.py` y luego escribí:
 
+```text
+Tengo un chatbot funcional hecho con Streamlit y
+llama-cpp-python.
+
+Quiero realizar un único cambio: modificar la función
+responder() para usar un system prompt mediante
+llm.create_chat_completion().
+
+El system prompt debe indicar que el modelo:
+- es un asistente educativo;
+- responde en español claro;
+- explica con palabras sencillas;
+- usa ejemplos breves cuando son útiles;
+- reconoce cuando no conoce una respuesta;
+- no inventa datos ni acciones realizadas;
+- puede usar Markdown para organizar la respuesta.
+
+La llamada debe enviar:
+- el system prompt con el rol "system";
+- la pregunta con el rol "user";
+- temperature=0.3.
+
+La respuesta se obtiene desde:
+salida["choices"][0]["message"]["content"]
+
+Si aparece la etiqueta </think>, eliminá la etiqueta y todo
+lo que se encuentre antes de ella.
+
+No modifiques cargar_modelo(), el historial ni la interfaz.
+No agregues dependencias nuevas.
+
+Antes de mostrar el código, explicá qué líneas vas a cambiar.
+Después mostrá solamente los bloques que debo reemplazar y
+proponé tres preguntas para comprobar el resultado.
 ```
-[Rol] + [Contexto] + [Tarea] + [Restricciones]
-```
 
-> **Regla de oro del prompt:** sé específico. "Mejorá la app" es un mal prompt. "Agregá un botón que borre el historial de la conversación, en español, sin tocar la capa de modelo" es un buen prompt.
+### Antes de copiar el resultado
+
+Revisá que la propuesta:
+
+- incorpore `import re` si utiliza expresiones regulares;
+- defina el `system prompt` en un lugar fácil de encontrar;
+- use `create_chat_completion()`;
+- conserve el parámetro `max_tokens`;
+- no cambie `cargar_modelo()`;
+- no reescriba la interfaz;
+- no agregue paquetes nuevos.
+
+### ✅ Pruebas del system prompt
+
+| Pregunta | Qué comprobamos |
+|---|---|
+| `¿Qué es una variable?` | Lenguaje claro y educativo |
+| `Explicalo usando una lista.` | Uso de Markdown |
+| `¿Qué desayuné hoy?` | Reconocimiento de información desconocida |
+
+Comprobá también que no aparezca el razonamiento anterior a `</think>`.
+
+> **No continúes si este cambio no funciona.** Volvé a la versión anterior, compará los bloques y pedile al agente que corrija solamente el error encontrado.
 
 ---
 
-## 3. Mejorar la app con una IA (ejercicio guiado)
+## 6. Mejoras controladas de la interfaz — 25 minutos
 
-Ahora vamos a usar una IA (Claude, ChatGPT, etc.) para mejorar la app que acabamos de crear. El flujo es siempre el mismo:
+Ahora que la función central está comprobada, podemos mejorar la interfaz. Aplicaremos cada mejora por separado y volveremos a ejecutar la app después de cada una.
 
-1. **Copiá el código** de tu `app.py`.
-2. **Pegalo** en el chat de la IA.
-3. **Pedile** un cambio con un prompt bien armado.
-4. **Revisá** el código que te devuelve.
-5. **Pegalo** de vuelta en `app.py` y guardá.
-6. **Probalo** en el navegador.
+### 6.1 Mostrar información sobre el modelo
 
-### ▶️ Paso 3.1 — Pedirle un cambio simple
+Queremos mostrar en la barra lateral:
 
-Copiá tu `app.py` completo y pegáselo a la IA, seguido de este prompt:
+- el repositorio del modelo;
+- el nombre del archivo GGUF;
+- una aclaración de que el modelo se ejecuta localmente.
 
-```
-Sos un experto en Streamlit. Tengo esta app de chat en Python.
+#### 🤖 Pedido al agente
 
-[PEGÁ ACÁ EL CÓDIGO DE TU app.py]
+```text
+Quiero agregar en st.sidebar información sobre el modelo con
+el que estoy chateando:
+- repositorio del modelo;
+- nombre del archivo GGUF;
+- el texto "El modelo se ejecuta localmente".
 
-Agregá un botón que borre el historial de la conversación.
-Respondé en español, con comentarios, y no cambies la capa de modelo.
-```
+Evitá repetir esos datos en distintos lugares: proponé dos
+constantes con nombres claros y reutilizalas tanto en
+cargar_modelo() como en la barra lateral.
 
-### ✅ Verificar
+No cambies la función responder(), el historial ni las
+dependencias. Mostrá solamente los bloques modificados y
+explicá dónde colocarlos.
 
-La IA te devuelve un `app.py` modificado. Reemplazá el contenido de tu archivo, guardá y probá en el navegador: debería aparecer un botón que limpia el chat.
-
-### ▶️ Paso 3.2 — Pedirle un cambio visual
-
-Ahora pedile que cambie la apariencia:
-
-```
-Ahora cambiá el estilo de la app para que se vea moderna:
-- Un color de fondo suave.
-- El título con un emoji distinto.
-- Los mensajes del usuario en un color y los del asistente en otro.
-Mantené toda la lógica igual.
+El cambio funciona si veo los datos correctos en la barra
+lateral y el chatbot continúa respondiendo.
 ```
 
-### ✅ Verificar
+#### ✅ Verificar
 
-La app debería verse distinta: fondo, colores y emoji nuevos. Si algo se rompe, pedile a la IA que lo corrija pegándole el error que aparece en la terminal.
+- La barra lateral aparece.
+- Los datos coinciden con el modelo realmente cargado.
+- El modelo se carga una sola vez.
+- El chatbot continúa respondiendo.
 
-### ▶️ Paso 3.3 — Pedirle una función nueva
+### 6.2 Revisar el historial antes de modificarlo
 
-Ahora algo más ambicioso: que la app **recuerde el nombre del usuario**:
+La aplicación de la Clase 1 ya guarda los mensajes en:
 
+```python
+st.session_state.mensajes
 ```
-Agregá una función para que la app pregunte el nombre del usuario
-la primera vez y lo use para saludarlo en cada respuesta.
-Guardá el nombre en st.session_state.
+
+Por eso no necesitamos pedir “agregá un historial”. Primero debemos pedirle al agente que reconozca y reutilice la solución existente.
+
+> **Lección:** antes de pedir una función, verificá si el programa ya la tiene. Duplicar una solución existente también es sobreingeniería.
+
+### 6.3 Agregar un botón para borrar la conversación
+
+#### 🤖 Pedido al agente
+
+```text
+Mi chatbot ya guarda el historial en
+st.session_state.mensajes.
+
+Agregá en la barra lateral un botón llamado
+"Borrar conversación".
+
+Al presionarlo:
+- debe vaciar st.session_state.mensajes;
+- la interfaz debe actualizarse;
+- debe ser posible iniciar una nueva conversación.
+
+No agregues un segundo historial.
+No modifiques cargar_modelo() ni responder().
+No agregues dependencias.
+
+Mostrá solamente las líneas nuevas, explicá dónde colocarlas
+y proponé tres pruebas manuales.
 ```
 
-### ✅ Verificar
+#### ✅ Verificar
 
-Al recargar la app, debería pedirte el nombre y usarlo en las respuestas.
+1. Enviá dos mensajes.
+2. Presioná el botón.
+3. Confirmá que la conversación desaparece.
+4. Enviá una nueva pregunta.
+5. Confirmá que el chatbot continúa funcionando.
 
-> **Si algo falla:** copiá el mensaje de error de la terminal y pegáselo a la IA con la instrucción *"corregí este error"*. La IA suele arreglarlo sola. Eso también es vibe coding: **depurar con ayuda de la IA**.
+### 6.4 Agregar un contador de mensajes
+
+#### 🤖 Pedido al agente
+
+```text
+Agregá en la barra lateral un contador que muestre cuántos
+mensajes hay en st.session_state.mensajes.
+
+No crees otra lista ni otra variable de historial.
+No cambies cargar_modelo() ni responder().
+No agregues dependencias.
+
+El contador debe actualizarse al enviar mensajes y volver a
+cero al borrar la conversación.
+```
+
+#### ✅ Verificar
+
+- El contador comienza en cero.
+- Aumenta con la conversación.
+- Coincide con los mensajes visibles.
+- Vuelve a cero al borrar el historial.
+
+### 6.5 Renderizar las respuestas como Markdown
+
+Pedile al agente que localice únicamente los lugares donde se muestran mensajes del asistente y reemplace allí `st.write()` por `st.markdown()`.
+
+#### Restricciones
+
+- No debe modificar la generación de la respuesta.
+- No debe habilitar `unsafe_allow_html=True`.
+- No debe cambiar cómo se muestran los mensajes del usuario.
+
+#### ✅ Verificar
+
+Pedile al chatbot una respuesta que contenga:
+
+- un título;
+- una lista con viñetas;
+- un fragmento de código.
+
+Los tres elementos deben aparecer con formato.
 
 ---
 
-## 4. Ejercicio de cierre
+## 7. Una mejora opcional de Streamlit — 10 minutos
 
-1. **Probalo:** hacé 3 preguntas sobre el curso. ¿Alguna respuesta es dudosa o inventada? Anotala.
-2. **Personalizalo:** aplicá los 5 cambios del ejercicio de personalización (paso 1).
-3. **Mejoralo con IA:** usá la IA para agregar una función que se te ocurra (ej. un botón de "limpiar", un saludo con nombre, un tema oscuro).
-4. **Pensá en la arquitectura:** ¿en qué capa de `app.py` agregarías la búsqueda en los notebooks para que el chatbot responda con el contenido del curso? Escribí tu idea.
+Elegí **una sola** de estas opciones:
 
-**Para la próxima clase:** traé la lista de preguntas dudosas que encontraste. Van a ser nuestro set de evaluación para medir si el RAG mejora las respuestas.
+- `st.toggle()` para mostrar u ocultar información técnica;
+- `st.expander()` para mostrar las reglas del asistente;
+- `st.caption()` para indicar que el modelo funciona localmente;
+- `st.download_button()` para descargar la conversación.
+
+### Condiciones de la mejora
+
+- Debe resolver una necesidad que puedas explicar.
+- No puede agregar dependencias.
+- No puede reescribir todo `app.py`.
+- No puede modificar la carga del modelo.
+- El agente debe explicar el código.
+- Debe incluir al menos dos pruebas manuales.
+
+### 🤖 Plantilla para pedirla
+
+```text
+Quiero agregar solamente [MEJORA ELEGIDA] a mi chatbot de
+Streamlit.
+
+La necesito para [EXPLICAR LA NECESIDAD].
+
+Podés modificar [INDICAR EL BLOQUE].
+
+No cambies cargar_modelo(), responder() ni la estructura del
+historial. No agregues dependencias y no reemplaces el archivo
+completo.
+
+Primero explicá tu propuesta. Después mostrá solamente el
+bloque necesario y dame dos pruebas manuales.
+```
+
+---
+
+## 8. Entregable y cierre — 5 minutos
+
+Cada alumno entrega:
+
+1. Su archivo `app.py` funcionando.
+2. Uno de los prompts utilizados para pedir una mejora.
+3. Una explicación breve del código agregado.
+4. La siguiente tabla de comprobación:
+
+| Función | Resultado esperado | ¿Funcionó? |
+|---|---|:---:|
+| System prompt | Mantiene el rol educativo | |
+| Filtro de razonamiento | No muestra el texto anterior a `</think>` | |
+| Información del modelo | Aparece en la barra lateral | |
+| Historial | Conserva los mensajes | |
+| Borrar conversación | Elimina todos los mensajes | |
+| Contador | Se actualiza correctamente | |
+| Markdown | Renderiza títulos, listas y código | |
+
+Finalmente, respondé:
+
+```text
+¿Qué cambio propuso la IA que decidí no aceptar, y por qué?
+```
+
+## Cinco reglas para llevarse de la clase
+
+1. Partí siempre de una versión funcional.
+2. Pedí un cambio por vez.
+3. Indicá qué partes no deben modificarse.
+4. No ejecutes código que no puedas explicar.
+5. Probá cada cambio antes de solicitar el siguiente.
+
+> Programar con agentes no significa entregarles el control del proyecto. Significa usarlos para proponer cambios mientras la persona conserva la responsabilidad de comprender, probar y decidir.
 
 ---
 
@@ -212,7 +527,7 @@ Al recargar la app, debería pedirte el nombre y usarlo en las respuestas.
 
 | Clase | Qué lograste |
 |---|---|
-| Clase 1 | Entendiste cómo se arma un software, la arquitectura de 3 capas y tenés la **app web funcionando** en el navegador |
-| Clase 2 | Personalizaste la app a mano y la **mejoraste con ayuda de una IA** (vibe coding) |
+| Clase 1 | Construiste un chatbot web con Streamlit y un LLM local |
+| Clase 2 | Aprendiste a mejorarlo con un agente de IA mediante cambios pequeños, explicables y comprobables |
 
-**En la Semana 2** vamos a hacer que el chatbot responda con el contenido real del curso: cargar los notebooks, trocearlos, convertirlos en embeddings y guardarlos en ChromaDB.
+**En la Semana 2** vamos a trabajar sobre una nueva limitación: el chatbot responde con conocimiento general y puede inventar información. Incorporaremos RAG para que pueda consultar el contenido real del curso antes de responder.
