@@ -12,6 +12,9 @@
 - Aprender a pedir código concreto, útil y comprobable.
 - Reconocer los riesgos de la sobreingeniería.
 - Reconocer los riesgos de ejecutar código que no entendemos.
+- Conectar Visual Studio Code con una cuenta de GitHub para usar GitHub Copilot Chat.
+- Distinguir cuándo usar los modos Ask, Plan y Agent.
+- Revisar permisos antes de permitir que el agente edite archivos o ejecute comandos.
 - Mantener siempre una versión funcional de la aplicación.
 - Realizar un cambio por vez y comprobarlo antes de continuar.
 - Incorporar un `system prompt` separado de la pregunta del usuario.
@@ -27,8 +30,7 @@ Al terminar la clase, nuestro chatbot tendrá:
 - información visible sobre el modelo utilizado;
 - historial de conversación;
 - un botón para borrar la conversación;
-- un contador de mensajes;
-- una pequeña mejora opcional de Streamlit.
+- un contador de mensajes.
 
 ## Cómo usar esta guía
 
@@ -124,7 +126,7 @@ Aceptar, corregir o deshacer
 
 ---
 
-## 3. Riesgos de programar con agentes — 15 minutos
+## 3. Riesgos y preparación del asistente de IA — 30 minutos
 
 ### 3.1 Sobreingeniería
 
@@ -172,6 +174,53 @@ También debemos detenernos si el agente propone:
 - modificar carpetas ajenas al proyecto.
 
 > **Regla de seguridad:** si no podés explicar qué hace una línea potencialmente sensible, no la ejecutes. Primero pedile al agente que la explique o consultá al docente.
+
+### 3.3 Conectar Visual Studio Code con GitHub Copilot Chat
+
+Para usar GitHub Copilot Chat, necesitás una cuenta de GitHub con acceso a Copilot. Puede ser un plan de una organización o el plan gratuito con sus límites de uso.
+
+1. Abrí en Visual Studio Code la carpeta del proyecto.
+2. Seleccioná el ícono de Copilot en la barra de estado y elegí **Use AI Features** o **Sign in to use Copilot**.
+3. Elegí iniciar sesión con GitHub.
+4. Completá la autorización en el navegador y regresá a Visual Studio Code.
+5. Abrí el chat desde el ícono de Chat. También podés usar `Ctrl+Alt+I` en Windows y Linux, o `Control+Command+I` en macOS.
+6. Verificá que el chat muestre tu cuenta y permita enviar una pregunta.
+
+> Si no aparece Copilot, comprobá que Visual Studio Code esté actualizado y que hayas iniciado sesión con la misma cuenta que tiene acceso a Copilot.
+
+Documentación de referencia: [configurar GitHub Copilot en Visual Studio Code](https://code.visualstudio.com/docs/setup/copilot).
+
+#### Modos básicos de Copilot Chat
+
+En la parte inferior del chat podemos elegir cómo queremos trabajar:
+
+| Modo | Para qué sirve | Ejemplo de uso |
+|---|---|---|
+| **Ask** | Comprender código, hacer preguntas y recibir sugerencias sin pedir una modificación directa. | `Explicame qué hace la función responder(). No modifiques archivos.` |
+| **Plan** | Analizar una tarea y preparar pasos antes de cambiar el proyecto. El plan se revisa antes de implementarlo. | `Prepará un plan para agregar un system prompt. No implementes todavía.` |
+| **Agent** | Trabajar sobre una tarea concreta: puede leer y editar archivos, usar herramientas y proponer comandos. | `Implementá el plan aprobado solamente en responder() y mostrá los cambios.` |
+
+> **Secuencia recomendada para esta clase:** usá **Ask** para comprender, **Plan** para delimitar el cambio y **Agent** cuando estés listo para implementarlo.
+
+Los nombres o la ubicación de estas opciones pueden variar según la versión de Visual Studio Code o las políticas de la organización. Si no aparece **Agent**, puede estar deshabilitado por el administrador.
+
+Documentación de referencia: [modos Ask, Plan y Agent](https://docs.github.com/en/copilot/how-tos/chat-with-copilot/chat-in-ide).
+
+#### Permisos: qué estamos autorizando
+
+En modo Agent, Copilot puede solicitar permiso para editar un archivo, ejecutar un comando en la terminal o acceder a una herramienta externa. Tener una herramienta habilitada no significa que todas sus acciones deban aprobarse automáticamente.
+
+Para esta clase, mantené seleccionados los **permisos manuales** y revisá cada solicitud antes de aceptarla:
+
+1. Leé qué archivo quiere modificar o qué comando quiere ejecutar.
+2. Comprobá que la acción pertenezca al cambio que pediste.
+3. Preferí **aprobar una vez** cuando todavía estás aprendiendo.
+4. Revisá el diff o comparación antes de conservar una edición.
+5. No autorices acciones que eliminen archivos, instalen paquetes, accedan a secretos o se conecten a servicios externos si no entendés por qué son necesarias.
+
+> **Configuración del laboratorio:** no usaremos **Allow all**, **Bypass Approvals** ni **Autopilot**. Reducen las confirmaciones y no son necesarios para los cambios pequeños de esta clase.
+
+Documentación de referencia: [aprobaciones y permisos en Visual Studio Code](https://code.visualstudio.com/docs/agents/run/approvals).
 
 ---
 
@@ -447,77 +496,6 @@ Pedile al chatbot una respuesta que contenga:
 Los tres elementos deben aparecer con formato.
 
 ---
-
-## 7. Una mejora opcional de Streamlit — 10 minutos
-
-Elegí **una sola** de estas opciones:
-
-- `st.toggle()` para mostrar u ocultar información técnica;
-- `st.expander()` para mostrar las reglas del asistente;
-- `st.caption()` para indicar que el modelo funciona localmente;
-- `st.download_button()` para descargar la conversación.
-
-### Condiciones de la mejora
-
-- Debe resolver una necesidad que puedas explicar.
-- No puede agregar dependencias.
-- No puede reescribir todo `app.py`.
-- No puede modificar la carga del modelo.
-- El agente debe explicar el código.
-- Debe incluir al menos dos pruebas manuales.
-
-### 🤖 Plantilla para pedirla
-
-```text
-Quiero agregar solamente [MEJORA ELEGIDA] a mi chatbot de
-Streamlit.
-
-La necesito para [EXPLICAR LA NECESIDAD].
-
-Podés modificar [INDICAR EL BLOQUE].
-
-No cambies cargar_modelo(), responder() ni la estructura del
-historial. No agregues dependencias y no reemplaces el archivo
-completo.
-
-Primero explicá tu propuesta. Después mostrá solamente el
-bloque necesario y dame dos pruebas manuales.
-```
-
----
-
-## 8. Entregable y cierre — 5 minutos
-
-Cada alumno entrega:
-
-1. Su archivo `app.py` funcionando.
-2. Uno de los prompts utilizados para pedir una mejora.
-3. Una explicación breve del código agregado.
-4. La siguiente tabla de comprobación:
-
-| Función | Resultado esperado | ¿Funcionó? |
-|---|---|:---:|
-| System prompt | Mantiene el rol educativo | |
-| Filtro de razonamiento | No muestra el texto anterior a `</think>` | |
-| Información del modelo | Aparece en la barra lateral | |
-| Historial | Conserva los mensajes | |
-| Borrar conversación | Elimina todos los mensajes | |
-| Contador | Se actualiza correctamente | |
-| Markdown | Renderiza títulos, listas y código | |
-
-Finalmente, respondé:
-
-```text
-¿Qué cambio propuso la IA que decidí no aceptar, y por qué?
-```
-
-## Cinco reglas para llevarse de la clase
-
-1. Partí siempre de una versión funcional.
-2. Pedí un cambio por vez.
-3. Indicá qué partes no deben modificarse.
-4. No ejecutes código que no puedas explicar.
-5. Probá cada cambio antes de solicitar el siguiente.
 
 > Programar con agentes no significa entregarles el control del proyecto. Significa usarlos para proponer cambios mientras la persona conserva la responsabilidad de comprender, probar y decidir.
 
