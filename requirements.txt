@@ -14,6 +14,9 @@ python-pptx
 google-genai
 python-dotenv
 streamlit
+pypdf
+sentence-transformers
+chromadb
 
 
 # Microsoft Windows
