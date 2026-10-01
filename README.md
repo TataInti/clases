@@ -55,6 +55,10 @@ Este repositorio contiene el material de clases para el curso de **IA Aplicada**
 - **Material opcional avanzado**: Entrenamiento de un mini-GPT desde cero
 
 ### Módulo 5: Retrieval-Augmented Generation (RAG)
+- **Clase 1**: Chatbot web con Streamlit y LLM local
+- **Clase 2**: Vibe coding: personalizar y mejorar la app con IA
+- **Clase 3**: RAG con PDF y embeddings
+- **Clase 4**: JEV, el LLM para decisiones (modelos System One)
 - Demo funcional de RAG (`modulo_5/rag_demo.ipynb`)
 
 ## Guía de Instalación Paso a Paso
