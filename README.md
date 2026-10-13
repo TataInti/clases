@@ -61,6 +61,7 @@ Este repositorio contiene el material de clases para el curso de **IA Aplicada**
 - **Clase 4**: JEV, el LLM para decisiones (modelos System One)
 - **Clase 5**: [Análisis exploratorio de datos de crédito](<modulo_5/Clase 5 - Analisis exploratorio de datos de credito.md>) — trabajo en dos grupos con Python e IA
 - **Clase 6**: [Análisis de negocio y selección de modelo](<modulo_5/Clase 6 - Analisis de negocio y seleccion de modelo.md>) — continuación y defensa de los hallazgos
+- **Clase 7**: [Evaluación y optimización de modelos](<modulo_5/Clase 7 - Evaluacion y optimizacion de modelos.md>) — generalización, métricas y validación cruzada
 - Demo funcional de RAG (`modulo_5/rag_demo.ipynb`)
 
 ## Guía de Instalación Paso a Paso
