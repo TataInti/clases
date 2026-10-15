@@ -52,7 +52,6 @@ Para colaborar, compartan el notebook con los integrantes como **Editor** y trab
 - Para este caso elegimos **`recall`** como métrica principal: queremos encontrar la mayor cantidad posible de casos que aparecen como morosos en la etiqueta. 
 - También miramos **`precisión`** para saber cuántos casos señalados corresponden a esa clase y **`F1`** para resumir ambas medidas. La matriz de confusión permite ver falsos positivos y falsos negativos.
 
-> Hay **sobreajuste** cuando el modelo rinde muy bien en los datos usados para aprender, pero peor al evaluarlo en otros. Por eso no alcanza con informar el resultado del entrenamiento.
 
 ## Actividad guiada en los dos grupos
 
@@ -64,8 +63,12 @@ Con ayuda de la IA construyen un modelo pequeño con una capa oculta y comparan:
 - **Configuración ajustada:** 16 neuronas en la capa oculta.
 - **Variables predictoras nuevas**
 
-Consejos:
-- Mantengan por defecto las demás opciones del modelo. Usen una `división estratificada` de 80 % para entrenamiento y 20 % para prueba. 
+Usamos un solo notebook para todos los experimentos. Vamos agregando celdas para cada etapa. Mantener simple todo el proceso.
+
+**Consignas**:
+- Mantengan por defecto las opciones del modelo. 
+- Usen una `división estratificada` de 80 % para entrenamiento y 20 % para prueba. 
+- Incorporen Cross-Validation
 - Elijan la configuración con el mayor `recall promedio` en validación cruzada. Si los promedios son parecidos, quédense con la más sencilla. 
 - Registren también `precisión` y `F1`; no hace falta probar otros modelos ni ajustar más parámetros.
 
