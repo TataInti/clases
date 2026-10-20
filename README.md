@@ -54,16 +54,18 @@ Este repositorio contiene el material de clases para el curso de **IA Aplicada**
 - **Clase 10**: Taller comparativo y defensa de arquitectura
 - **Material opcional avanzado**: Entrenamiento de un mini-GPT desde cero
 
-### Módulo 5: Retrieval-Augmented Generation (RAG)
+### Módulo 5: Aplicaciones, modelos y gobernanza de IA
 - **Clase 1**: Chatbot web con Streamlit y LLM local
 - **Clase 2**: Vibe coding: personalizar y mejorar la app con IA
 - **Clase 3**: RAG con PDF y embeddings
 - **Clase 4**: JEV, el LLM para decisiones (modelos System One)
-- **Clase 5**: [Análisis exploratorio de datos de crédito](<modulo_5/Clase 5 - Analisis exploratorio de datos de credito.md>) — trabajo en dos grupos con Python e IA
-- **Clase 6**: [Análisis de negocio y selección de modelo](<modulo_5/Clase 6 - Analisis de negocio y seleccion de modelo.md>) — continuación y defensa de los hallazgos
-- **Clase 7**: [Evaluación y optimización de modelos](<modulo_5/Clase 7 - Evaluacion y optimizacion de modelos.md>) — generalización, métricas y validación cruzada
-- **Clase 8**: [Seleccionar variables desde el conjunto de datos](<modulo_5/Clase 8 - Seleccion estadistica de variables predictivas.md>) — cribado estadístico y comparación de modelos
-- Demo funcional de RAG (`modulo_5/rag_demo.ipynb`)
+- **Clase 5**: Análisis exploratorio de datos de crédito
+- **Clase 6**: Análisis de negocio y selección de modelo
+- **Clase 7**: Evaluación y optimización de modelos
+- **Clase 8**: Seleccionar variables desde el conjunto de datos
+- **Clase 9**: Human-in-the-Loop: supervisión humana de sistemas de IA
+- **Clase 10**: Integración: monitoreo y gobernanza de sistemas de IA
+
 
 ## Guía de Instalación Paso a Paso
 
