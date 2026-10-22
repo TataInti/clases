@@ -13,67 +13,54 @@
 
 Al finalizar, vas a poder:
 
-- distinguir un cambio en los datos de una caída medida en el rendimiento;
-- interpretar MAE, RMSE y R² como respuestas a preguntas distintas sobre una regresión;
-- proponer un ciclo de monitoreo, diagnóstico, validación y mejora;
-- explicar cuándo una solución necesita RAG y cuándo necesita memoria conversacional;
-- incluir una intervención humana en un flujo de agente;
-- diseñar un registro que permita reconstruir una decisión y su resultado;
-- defender una arquitectura con evidencia, límites y responsabilidades explícitas.
+- distinguir un cambio en los datos de una caída en el rendimiento;
+- proponer un ciclo de monitoreo, diagnóstico y mejora;
+- explicar cuándo el sistema busca información y cuándo conserva memoria;
+- incluir una intervención humana y un registro de lo ocurrido;
+- reconocer en un flujo qué pasos conviene agregar para que el sistema sea comprobable y revisable, y justificarlos.
 
 ## Idea central
 
-Un sistema de IA continúa expuesto a cambios después de su puesta en marcha. El monitoreo permite detectar señales; la evaluación con resultados reales ayuda a medir el rendimiento; y la gobernanza define quién investiga, decide y documenta los cambios.
+Un sistema de IA continúa expuesto a cambios después de su puesta en marcha. Para que siga siendo útil, el monitoreo detecta señales, la evaluación con resultados reales mide el rendimiento y la gobernanza define quién investiga, decide y documenta. Para que sea revisable, conviene saber qué información usa, qué recuerda y qué acciones deja para una persona.
 
-En los agentes, memoria, recuperación de información, herramientas y supervisión humana resuelven problemas diferentes. Una arquitectura clara permite saber qué componente intervino y qué evidencia sustenta una acción.
+Esta clase está pensada para prepararte para el ejercicio final: vas a recorrer el marco conceptual en tres familias (vigilar y comprobar, buscar y recordar, pausar y registrar) y después aplicarlo sobre un flujo concreto.
 
 ## Agenda
 
 | Tiempo | Momento | Propósito |
 |---:|---|---|
 | 0–8 min | Apertura | Recordar qué puede cambiar después del despliegue |
-| 8–25 min | Cambios y señales | Distinguir cambio en datos y deterioro de rendimiento |
-| 25–40 min | Métricas de regresión | Elegir e interpretar métricas según el costo del error |
-| 40–52 min | Ciclo de mejora | Definir investigación y validación antes de actualizar |
-| 52–65 min | Arquitectura de agente | Diferenciar RAG, memoria, herramientas y HITL |
-| 65–78 min | Demostración docente | Recorrer el caso integrador del centro cultural |
-| 78–108 min | Trabajo grupal | Diseñar seguimiento y controles para el sistema |
-| 108–118 min | Defensa breve | Justificar elecciones y límites |
-| 118–120 min | Cierre | Anotar una señal prioritaria |
+| 8–25 min | Vigilar y comprobar | Distinguir una señal de cambio de una medición de precisión |
+| 25–40 min | Ciclo de mejora | Definir investigación y validación antes de actualizar |
+| 40–55 min | Buscar, recordar, pausar y registrar | Diferenciar información, memoria, aprobación y trazabilidad |
+| 55–70 min | Caso integrador | Presentar el flujo base del centro cultural |
+| 70–100 min | Ejercicio grupal | Agregar pasos al flujo y justificarlos |
+| 100–112 min | Defensa breve | Justificar pasos y límites |
+| 112–120 min | Cierre | Anotar una señal prioritaria |
 
-## 1. Apertura — 8 minutos
+## 1. Apertura
 
 Pensá en un sistema que funcionaba bien cuando se publicó. Anotá tres cosas que podrían cambiar con el tiempo: una relacionada con los datos, una con el uso de la aplicación y una con las reglas de la organización.
 
-## 2. Cambios en los datos y en el rendimiento — 17 minutos
+## 2. Vigilar y comprobar
 
-### Deriva de datos
+### Cambios en lo que llega
 
-Se habla de **deriva de datos** cuando las características o la distribución de los datos de entrada cambian con respecto a los datos de referencia. Es una señal para investigar; por sí sola no prueba que el modelo ahora cometa más errores.
+Se habla de **cambio en los datos** cuando las características o la distribución de lo que llega al sistema se parecen menos a los datos con los que se lo probó. Es una señal para investigar; por sí sola no prueba que el sistema ahora cometa más errores. Por ejemplo, en el recorrido de hoy: si cambia la frecuencia con la que se ofrecen ciertas actividades, eso llama la atención pero todavía no dice si las predicciones empeoraron.
 
-### Rendimiento observado
+### Medir contra resultados reales
 
-Para saber cómo predice el modelo en la operación, necesitamos comparar sus predicciones con resultados reales cuando esos resultados estén disponibles. Una variación de la entrada y una variación del error están relacionadas, pero no significan lo mismo.
+Para saber si un sistema que anticipa un número sigue siendo útil, hay que comparar lo que anticipó con lo que efectivamente ocurrió, cuando el resultado real esté disponible. Una variación de la entrada y una variación del error están relacionadas, pero no significan lo mismo.
 
 | Evidencia | Qué permite decir | Qué todavía no permite concluir |
 |---|---|---|
-| Cambió la frecuencia de una categoría de entrada | La composición de los datos es distinta | Que la calidad del modelo necesariamente cayó |
-| Aumentó el error frente a resultados reales | El rendimiento medido empeoró en el período observado | Qué cambio fue la causa |
-| Los errores se concentran en un grupo de registros | El promedio general puede ocultar diferencias | Que todas las personas se ven afectadas igual |
+| Cambió la frecuencia de una categoría de entrada | La composición de lo que llega es distinta | Que la calidad del sistema necesariamente cayó |
+| Aumentó el desvío frente a resultados reales | El rendimiento medido empeoró en el período observado | Qué cambio fue la causa |
+| Los desvíos se concentran en un grupo de casos | El promedio general puede ocultar diferencias | Que todas las personas se ven afectadas igual |
 
-## 3. Métricas de regresión — 15 minutos
+Para describir el desvío se puede usar una sola cifra promedio (cuánto se equivoca el sistema en las unidades del resultado) y, si interesa, cuánto pesan los errores grandes. No hay una cifra universalmente mejor: la elección depende de qué tipo de error cuesta más en cada servicio. En este ejercicio no hace falta calcular nada; alcanza con decidir y explicar el tipo de desvío que importa.
 
-Las métricas ofrecen perspectivas diferentes sobre los errores numéricos:
-
-| Métrica | Lectura sencilla | Cuándo ayuda |
-|---|---|---|
-| MAE | Error absoluto promedio, en las unidades del objetivo | Comunicar cuánto se desvía una predicción en promedio |
-| RMSE | Error con más peso para desviaciones grandes | Vigilar errores grandes que sean especialmente costosos |
-| R² | Comparación con una referencia basada en la variabilidad observada | Entender cuánto aporta el modelo frente a predecir la media en esos datos |
-
-No hay una métrica universalmente mejor. La elección depende de la decisión y del costo de distintos tipos de error. Se pueden informar varias métricas si se explica qué pregunta responde cada una.
-
-## 4. Ciclo de monitoreo y mejora — 12 minutos
+## 3. Ciclo de monitoreo y mejora
 
 1. Definir qué datos, resultados y grupos se van a observar.
 2. Guardar una referencia para comparar los datos que llegan.
@@ -83,23 +70,29 @@ No hay una métrica universalmente mejor. La elección depende de la decisión y
 6. Documentar quién aprobó el cambio, cómo se comprobó y cómo se volvería atrás si empeora.
 7. Seguir midiendo después de actualizar.
 
-Una alerta no obliga a reentrenar. Primero hay que validar los datos, comprender el problema y decidir si un cambio es necesario.
+Una alerta no obliga a cambiar el sistema. Primero hay que validar los datos, comprender el problema y decidir si un cambio es necesario.
 
-## 5. Integrar componentes de agentes — 13 minutos
+## 4. Buscar, recordar, pausar y registrar
 
-| Componente | Qué resuelve | Qué no reemplaza |
-|---|---|---|
-| RAG | Recuperar fragmentos pertinentes de fuentes aprobadas antes de redactar | El historial de la conversación o la verificación de una acción |
-| Memoria | Conservar información necesaria para continuar la interacción | La fuente oficial de datos del negocio |
-| Herramientas | Consultar o modificar sistemas con operaciones delimitadas | Los controles de acceso y validaciones de la aplicación |
-| HITL | Dar a una persona un punto real de revisión o aprobación | Una política de permisos o un registro de lo ocurrido |
-| Trazabilidad | Reconstruir fuentes, propuesta, decisión, aprobación y resultado | La prueba de que la decisión fue correcta por el solo hecho de existir un registro |
+Un sistema que conversa con personas puede buscar información, recordar lo dicho, detener acciones para una persona y dejar registro. Son funciones distintas, y conviene identificarlas por separado para saber qué pasos agregar al flujo.
 
-### Gobernanza y registro de eventos
+### Buscar información (de dónde sale lo confiable)
 
-ISO/IEC 42001:2023 define un marco de sistema de gestión para establecer, implementar, mantener y mejorar la gestión responsable de sistemas de IA. En esta clase lo conectamos con decisiones concretas: asignar responsables, identificar riesgos, definir controles, observar resultados y revisar si los controles funcionan. Un registro de eventos aporta evidencia para analizar el funcionamiento; por sí solo no demuestra cumplimiento ni que una decisión haya sido correcta.
+Cuando hay que responder con datos que deben estar actualizados y autorizados (horarios, condiciones, descripciones), el sistema los recupera de una fuente definida. Que el sistema tenga esa fuente no le da el contexto de la conversación actual.
 
-Ejemplo didáctico de un registro para una solicitud de reserva:
+### Recordar lo dicho en la conversación
+
+Para no perder el hilo, el sistema conserva lo que la persona ya dijo (por ejemplo, un horario preferido). Que el sistema recuerde una preferencia no reemplaza tener los datos vigentes a mano.
+
+### Pausar para que una persona decida
+
+Una acción con impacto (afectar una reserva, la disponibilidad de una sala) conviene detenerla antes de ejecutarla para que alguien la revise. Quien revisa necesita ver qué pidió la persona, qué información se usó y qué se propone hacer.
+
+### Dejar registro de lo ocurrido
+
+Dejar registro de cada paso permite reconstruir más tarde qué ocurrió y quién intervino; ayuda a investigar cuando algo no sale como se esperaba. Un registro aporta evidencia para analizar el funcionamiento; por sí solo no demuestra que la decisión fue correcta.
+
+Ejemplo de un registro para una solicitud de reserva:
 
 ```json
 {
@@ -115,64 +108,90 @@ Ejemplo didáctico de un registro para una solicitud de reserva:
 
 El registro debe ser suficiente para revisar el evento sin guardar datos personales innecesarios. La organización define quién accede, cuánto tiempo conserva los registros y cómo corrige errores.
 
-## 6. Demostración docente — 13 minutos
+La norma **ISO/IEC 42001:2023** provee un marco de sistema de gestión para la gestión responsable de sistemas de IA. En clase lo conectamos con decisiones concretas: asignar responsables, identificar riesgos, definir controles, observar resultados y revisar si los controles funcionan. Un registro de eventos aporta evidencia para analizar el funcionamiento; por sí solo no demuestra cumplimiento ni que una decisión haya sido correcta.
 
-### Centro cultural y agenda de actividades
+## 5. Presentación del caso: el centro cultural
 
-Un centro cultural quiere estimar la asistencia semanal para organizar recursos y ofrecer un asistente que responda consultas sobre actividades y prepare solicitudes de reserva.
+### Qué hace el sistema
 
-El diseño contempla:
+Un centro cultural quiere estimar la asistencia semanal para organizar recursos y ofrecer un asistente que responda consultas sobre la agenda y prepare solicitudes de reserva.
 
-- un modelo de regresión que estima asistentes por semana;
-- un seguimiento de datos de entrada y errores frente a asistencias reales;
-- una base documental aprobada con horarios, condiciones y descripciones;
-- recuperación RAG para responder preguntas con esa información;
-- memoria acotada para mantener preferencias durante la conversación;
-- revisión humana antes de confirmar una reserva que afecta la disponibilidad;
-- un registro de la fuente, la propuesta, la decisión humana y el resultado.
+Entre otras cosas, el sistema puede:
 
-Recorré el flujo y preguntá qué evidencia permitiría evaluar cada parte. Si cambia la frecuencia de los eventos, esa observación inicia una revisión; no indica automáticamente la causa ni demuestra por sí misma que las predicciones hayan empeorado.
+- estimar cuánta gente vendrá a cada actividad;
+- responder con los horarios, condiciones y descripciones aprobadas;
+- recordar lo que la persona dijo antes en la conversación (por ejemplo, un horario preferido);
+- pausar ante una reserva que afecta la disponibilidad para que alguien la confirme;
+- dejar registro de los pasos para poder revisar después qué ocurrió.
 
-## 7. Trabajo grupal — 30 minutos
+### El flujo base
 
-### Desafío: diseñar el seguimiento del sistema
+El caso parte de un **flujo mínimo**: el camino que sigue el asistente desde que la persona escribe hasta que recibe una respuesta. Este flujo no incluye aún vigilancia, aprobación ni registro; es el esqueleto al que se le pueden agregar pasos.
 
-En equipos, diseñen una ficha de arquitectura y monitoreo para el centro cultural o para otro servicio cotidiano que elijan. No usen los escenarios del examen.
+```mermaid
+flowchart TD
+    A["La persona escribe una consulta o pide una reserva"] --> B["El asistente interpreta qué pide"]
+    B --> C["Busca la información necesaria en la agenda"]
+    C --> D["Prepara la respuesta o la propuesta de reserva"]
+    D --> E["Se la presenta a la persona"]
+```
 
-1. Definan qué predice el modelo y qué resultados reales servirían para medirlo.
-2. Elijan una métrica principal y expliquen qué errores quieren entender.
-3. Especifiquen una señal de cambio en los datos y una comprobación del rendimiento.
-4. Indiquen qué fuente consultaría el RAG y qué información conservaría la memoria.
-5. Marquen una acción que necesita revisión humana y qué información verá quien decide.
-6. Definan qué eventos registrarían para reconstruir la operación y revisar una alerta. Redacten un registro de ejemplo con identificador de sesión, herramienta, decisión, estado de revisión y resultado; usen datos ficticios.
-7. Anoten un límite: qué no se puede afirmar sin más evidencia.
+Por sí solo, este flujo no comprueba que el sistema sigue siendo útil, no detiene decisiones con impacto ni deja rastro de lo ocurrido. Eso es lo que se agrega en el ejercicio.
 
-**Entrega del equipo:** un diagrama de componentes y una ficha de seguimiento con señal, métrica, responsable, revisión humana y evidencia a registrar.
+## 6. Ejercicio grupal
 
-| Componente | Qué observa o hace | Señal o métrica | Quién revisa | Acción posible |
-|---|---|---|---|---|
-| Modelo numérico |  |  |  |  |
-| Recuperación y memoria |  |  |  |  |
-| Acción del agente |  |  |  |  |
-| Aprobación y trazabilidad |  |  |  |  |
+### Consigna
 
-## 8. Defensa breve — 10 minutos
+Partiendo del flujo base que se presentó en la sección anterior, **agreguen los pasos que consideren necesarios** para que el sistema del centro sea comprobable y revisable, y **justifiquen cada paso**. No hay una cantidad fija: sumen todos los que crean convenientes, siempre que cada uno se pueda explicar.
 
-Cada equipo presenta una decisión de diseño y un límite de su análisis. El grupo revisa si:
+### Qué se puede agregar (integra lo trabajado)
 
-- la métrica responde a la pregunta planteada;
-- la señal de cambio se distingue del rendimiento medido;
-- la fuente de RAG y la memoria cumplen funciones diferentes;
-- la acción se pausa antes del punto que requiere aprobación;
+Las secciones 2 y 3 preparan la primera familia, y la sección 4 prepara las otras dos:
+
+- **Vigilar y comprobar:** registrar las entradas, definir una señal de que algo cambió y comparar lo que el sistema anticipó con lo que realmente ocurrió. Recordá que una señal de cambio y una medición de precisión son cosas distintas.
+- **Buscar y recordar:** indicar de dónde sale la información confiable y qué dato de la conversación se conserva. Son funciones distintas.
+- **Pausar y registrar:** detener la acción que tiene impacto para que una persona la decida y dejar registro de cada paso, para poder reconstruir qué ocurrió y quién intervino.
+
+### Cómo resolverlo
+
+1. Lean el flujo base y marquen el punto donde conviene insertar cada paso nuevo.
+2. Para cada paso agregado, completen la tabla siguiente.
+3. Reconstruyan el **flujo completo** en un diagrama Mermaid que incluya los pasos del flujo base y los que agregaron.
+4. Justifiquen cada paso: qué problema del flujo base resuelve y qué evidencia produce.
+
+### Entrega del equipo
+
+Cuando terminen, entreguen:
+
+1. **Un diagrama Mermaid** con el flujo completo (base + pasos agregados).
+2. **La tabla de pasos justificados**, con una fila por cada paso nuevo.
+
+La primera fila de la tabla es un ejemplo orientativo (del centro cultural); ajústenla o reemplácenla.
+
+| Paso agregado | Qué hace | Dónde se inserta | Qué evidencia produce | Quién interviene | Justificación |
+|---|---|---|---|---|---|
+| **Ejemplo: registrar la reserva** | Guarda quién pidió, qué se propuso y cómo terminó | Después de que la persona pide la reserva, antes de confirmarla | Reconstruir después qué ocurrió y quién intervino | Responsable de reservas | Sin registro no se puede revisar un problema posterior |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+
+## 7. Defensa breve
+
+Cada equipo presenta un paso agregado y un límite de su análisis. El grupo revisa si:
+
+- el paso está bien ubicado en el flujo;
+- la justificación explica qué problema resuelve y qué evidencia produce;
+- la señal de cambio se distingue de la comprobación de precisión;
+- la búsqueda de información y lo recordado de la conversación quedan como funciones distintas;
+- la acción con impacto se pausa para una persona y deja registro;
 - el registro permite saber qué ocurrió y quién intervino.
 
-## 9. Cierre — 2 minutos
+## 8. Cierre
 
 Completá: **“Si observo ___, primero buscaría ___ antes de recomendar un cambio.”**
 
 ## Criterio de logro
 
-La propuesta distingue señales de rendimiento, relaciona métricas con decisiones, asigna responsabilidades, conserva una revisión humana donde corresponde y documenta qué evidencia falta.
+La propuesta incorpora pasos para comprobar el funcionamiento, distingue señales de rendimiento, asigna responsabilidades, conserva una revisión humana donde corresponde y documenta qué evidencia falta.
 
 ## Referencias
 
